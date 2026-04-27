@@ -1,65 +1,211 @@
+"use client";
+
+import { useRef, useState } from "react";
 import Image from "next/image";
 
+interface Exercise {
+  name: string;
+  targetMuscles: string;
+  execution: string;
+}
+
+interface AnalysisResult {
+  machineName: string;
+  muscleGroups: string[];
+  exercises: Exercise[];
+}
+
 export default function Home() {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setResult(null);
+    setError(null);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
+  function handleReset() {
+    setImageFile(null);
+    setImagePreview(null);
+    setResult(null);
+    setError(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  async function handleAnalyze() {
+    if (!imageFile) return;
+
+    let data: Record<string, unknown>;
+    let res: Response;
+    try {
+      setLoading(true);
+      setError(null);
+      setResult(null);
+
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      
+      res = await fetch("/api/analyze", { method: "POST", body: formData });
+      data = await res.json();
+    } catch {
+      setError("Error del servidor — respuesta inválida");
+      setLoading(false);
+      return;
+    }
+
+    if (!res.ok) {
+      setError((data.error as string) ?? "Error al analizar la imagen");
+    } else {
+      setResult(data as unknown as AnalysisResult);
+    }
+    setLoading(false);
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-gray-950 text-white">
+      <div className="mx-auto max-w-lg px-4 py-10">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight">
+            🏋️ Gym Machine Analyzer
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-2 text-gray-400">
+            Sube o toma una foto de una máquina y recibe ejercicios recomendados
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Upload / Preview */}
+        {!imagePreview ? (
+          <label
+            htmlFor="image-upload"
+            className="flex flex-col items-center justify-center w-full h-52 rounded-2xl border-2 border-dashed border-gray-600 bg-gray-900 cursor-pointer hover:border-indigo-500 hover:bg-gray-800 transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            <span className="text-4xl mb-3">📷</span>
+            <span className="text-sm font-medium text-gray-300">
+              Toca para subir o tomar foto
+            </span>
+            <span className="text-xs text-gray-500 mt-1">
+              JPG, PNG, WEBP — máx 10 MB
+            </span>
+            <input
+              id="image-upload"
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="sr-only"
+              onChange={handleFileChange}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </label>
+        ) : (
+          <div className="relative rounded-2xl overflow-hidden">
+            <Image
+              src={imagePreview}
+              alt="Máquina seleccionada"
+              width={500}
+              height={300}
+              className="w-full object-cover max-h-72"
+              unoptimized
+            />
+            <button
+              onClick={handleReset}
+              className="absolute top-3 right-3 rounded-full bg-gray-900/80 px-3 py-1 text-xs font-medium hover:bg-gray-700 transition-colors"
+            >
+              Cambiar imagen
+            </button>
+          </div>
+        )}
+
+        {/* Analyze button */}
+        {imagePreview && (
+          <button
+            onClick={handleAnalyze}
+            disabled={loading}
+            className="mt-4 w-full rounded-xl bg-indigo-600 px-6 py-3.5 font-semibold text-white hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            {loading ? (
+              <>
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Analizando...
+              </>
+            ) : (
+              "Analizar máquina"
+            )}
+          </button>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div className="mt-4 rounded-xl bg-red-900/40 border border-red-700 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
+
+        {/* Results */}
+        {result && (
+          <div className="mt-6 space-y-5">
+            {/* Machine name */}
+            <div className="rounded-2xl bg-gray-900 p-5">
+              <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-1">
+                Máquina identificada
+              </p>
+              <h2 className="text-2xl font-bold">{result.machineName}</h2>
+
+              {/* Muscle badges */}
+              {result.muscleGroups?.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {result.muscleGroups.map((muscle) => (
+                    <span
+                      key={muscle}
+                      className="rounded-full bg-indigo-900/60 border border-indigo-700 px-3 py-0.5 text-xs font-medium text-indigo-300"
+                    >
+                      {muscle}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Exercises */}
+            <div className="space-y-3">
+              <h3 className="text-xs uppercase tracking-widest text-gray-400 font-semibold px-1">
+                Ejercicios recomendados
+              </h3>
+              {result.exercises.map((ex, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl bg-gray-900 p-5 space-y-2"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <h4 className="font-semibold text-white leading-tight">
+                        {ex.name}
+                      </h4>
+                      <p className="text-xs text-indigo-300 mt-0.5">
+                        {ex.targetMuscles}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-300 leading-relaxed pl-10">
+                    {ex.execution}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
