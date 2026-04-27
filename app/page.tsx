@@ -200,6 +200,15 @@ export default function Home() {
                   <p className="text-sm text-gray-300 leading-relaxed pl-10">
                     {ex.execution}
                   </p>
+                  <a
+                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " tutorial gym")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 pl-10 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                  >
+                    <span aria-hidden="true">▶</span>
+                    Ver tutorial
+                  </a>
                 </div>
               ))}
             </div>
