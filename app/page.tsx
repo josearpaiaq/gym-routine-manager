@@ -6,7 +6,7 @@ import Image from "next/image";
 interface Exercise {
   name: string;
   targetMuscles: string;
-  execution: string;
+  execution: string[];
 }
 
 interface AnalysisResult {
@@ -82,6 +82,17 @@ export default function Home() {
           </p>
         </div>
 
+        {/* Always-present hidden file input */}
+        <input
+          id="image-upload"
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="sr-only"
+          onChange={handleFileChange}
+        />
+
         {/* Upload / Preview */}
         {!imagePreview ? (
           <label
@@ -95,15 +106,6 @@ export default function Home() {
             <span className="text-xs text-gray-500 mt-1">
               JPG, PNG, WEBP — máx 10 MB
             </span>
-            <input
-              id="image-upload"
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="sr-only"
-              onChange={handleFileChange}
-            />
           </label>
         ) : (
           <div className="relative rounded-2xl overflow-hidden">
@@ -116,7 +118,7 @@ export default function Home() {
               unoptimized
             />
             <button
-              onClick={handleReset}
+              onClick={() => fileInputRef.current?.click()}
               className="absolute top-3 right-3 rounded-full bg-gray-900/80 px-3 py-1 text-xs font-medium hover:bg-gray-700 transition-colors"
             >
               Cambiar imagen
@@ -124,8 +126,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* Analyze button */}
-        {imagePreview && (
+        {/* Analyze button — hidden once results are shown */}
+        {imagePreview && !result && (
           <button
             onClick={handleAnalyze}
             disabled={loading}
@@ -197,9 +199,14 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-300 leading-relaxed pl-10">
-                    {ex.execution}
-                  </p>
+                  <ol className="pl-10 space-y-1.5 list-none">
+                    {ex.execution.map((step, j) => (
+                      <li key={j} className="flex gap-2 text-sm text-gray-300 leading-relaxed">
+                        <span className="shrink-0 font-medium text-indigo-400">{j + 1}.</span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
                   <a
                     href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " tutorial gym")}`}
                     target="_blank"

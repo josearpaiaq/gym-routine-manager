@@ -12,22 +12,53 @@
     {
       "name": "Cable Crossover (Cruce de Poleas)",
       "targetMuscles": "Pectoral mayor, deltoides anterior y pectoral menor",
-      "execution": "1. Coloca las poleas a la altura de los hombros o por encima. 2. Párate en el centro de la máquina con un pie ligeramente adelantado. 3. Toma las manijas con ambas manos, extiende los brazos hacia los lados formando una T. 4. Con una ligera flexión en los codos, lleva ambas manijas hacia el centro del cuerpo en un movimiento de arco. 5. Junta las manos frente al pecho o el abdomen. 6. Mantén la contracción 1 segundo y regresa lentamente a la posición inicial. 7. Mantén el torso erguido y el core activado durante todo el movimiento."
+      "execution": [
+        "Coloca las poleas a la altura de los hombros o por encima.",
+        "Párate en el centro de la máquina con un pie ligeramente adelantado.",
+        "Toma las manijas con ambas manos y extiende los brazos hacia los lados formando una T.",
+        "Con una ligera flexión en los codos, lleva ambas manijas hacia el centro del cuerpo en un movimiento de arco.",
+        "Junta las manos frente al pecho o el abdomen.",
+        "Mantén la contracción 1 segundo y regresa lentamente a la posición inicial.",
+        "Mantén el torso erguido y el core activado durante todo el movimiento."
+      ]
     },
     {
       "name": "Curl de Bíceps con Cable",
       "targetMuscles": "Bíceps braquial, braquial anterior y braquiorradial",
-      "execution": "1. Ajusta ambas poleas a la posición más baja. 2. Párate en el centro, toma las manijas con las palmas hacia arriba. 3. Mantén los codos pegados al cuerpo y el torso recto. 4. Flexiona ambos codos simultáneamente llevando las manijas hacia los hombros. 5. Contrae los bíceps en la parte superior del movimiento. 6. Regresa de forma controlada a la posición inicial sin bloquear completamente los codos."
+      "execution": [
+        "Ajusta ambas poleas a la posición más baja.",
+        "Párate en el centro y toma las manijas con las palmas hacia arriba.",
+        "Mantén los codos pegados al cuerpo y el torso recto.",
+        "Flexiona ambos codos simultáneamente llevando las manijas hacia los hombros.",
+        "Contrae los bíceps en la parte superior del movimiento.",
+        "Regresa de forma controlada a la posición inicial sin bloquear completamente los codos."
+      ]
     },
     {
       "name": "Press de Pecho con Cable (Cable Chest Press)",
       "targetMuscles": "Pectoral mayor, deltoides anterior y tríceps",
-      "execution": "1. Ajusta las poleas a la altura de los hombros. 2. Párate en el centro con un pie adelantado para mayor estabilidad. 3. Toma las manijas con las palmas hacia abajo o enfrentadas. 4. Empuja ambas manijas hacia adelante extendiendo los brazos frente al pecho. 5. Junta ligeramente las manos en el punto de máxima extensión. 6. Regresa lentamente resistiendo el peso hasta la posición inicial. 7. Mantén el core apretado y evita arquear la espalda."
+      "execution": [
+        "Ajusta las poleas a la altura de los hombros.",
+        "Párate en el centro con un pie adelantado para mayor estabilidad.",
+        "Toma las manijas con las palmas hacia abajo o enfrentadas.",
+        "Empuja ambas manijas hacia adelante extendiendo los brazos frente al pecho.",
+        "Junta ligeramente las manos en el punto de máxima extensión.",
+        "Regresa lentamente resistiendo el peso hasta la posición inicial.",
+        "Mantén el core apretado y evita arquear la espalda."
+      ]
     },
     {
       "name": "Face Pull con Cable",
       "targetMuscles": "Deltoides posterior, trapecio medio, romboides y manguito rotador",
-      "execution": "1. Ajusta ambas poleas a la altura de la cara o ligeramente por encima. 2. Párate en el centro con los pies separados al ancho de los hombros. 3. Toma las manijas con las palmas enfrentadas o hacia abajo. 4. Da un paso atrás para crear tensión en los cables. 5. Tira de las manijas hacia tu cara separando los codos hacia los lados y hacia arriba. 6. Lleva las manos hacia las orejas rotando externamente los hombros. 7. Aprieta los omóplatos al final del movimiento y regresa lentamente."
+      "execution": [
+        "Ajusta ambas poleas a la altura de la cara o ligeramente por encima.",
+        "Párate en el centro con los pies separados al ancho de los hombros.",
+        "Toma las manijas con las palmas enfrentadas o hacia abajo.",
+        "Da un paso atrás para crear tensión en los cables.",
+        "Tira de las manijas hacia tu cara separando los codos hacia los lados y hacia arriba.",
+        "Lleva las manos hacia las orejas rotando externamente los hombros.",
+        "Aprieta los omóplatos al final del movimiento y regresa lentamente."
+      ]
     }
   ]
 }

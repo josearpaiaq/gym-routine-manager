@@ -42,3 +42,6 @@ next-env.d.ts
 
 # machine response cache
 /cache/
+
+# sqlite database
+/db/

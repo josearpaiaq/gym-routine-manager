@@ -1,16 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import mockResponse from "@/fixtures/cable-crossover.json";
+import { getMachineByNormalizedName, saveMachine } from "@/lib/db";
 
 const client = new Anthropic();
-
-interface AnalysisResult {
-  machineName: string;
-  muscleGroups: string[];
-  exercises: Array<{ name: string; targetMuscles: string; execution: string }>;
-}
 
 const SYSTEM_PROMPT = `Eres un experto entrenador personal y especialista en equipamiento de gimnasio.
 Cuando recibas una imagen de una máquina de gym, analízala y responde ÚNICAMENTE con un objeto JSON válido (sin markdown, sin bloques de código) con esta estructura exacta:
@@ -22,7 +15,7 @@ Cuando recibas una imagen de una máquina de gym, analízala y responde ÚNICAME
     {
       "name": "nombre del ejercicio",
       "targetMuscles": "músculos principales que trabaja",
-      "execution": "descripción paso a paso de cómo ejecutar correctamente el ejercicio"
+      "execution": ["paso 1", "paso 2", "paso 3"]
     }
   ]
 }
@@ -34,8 +27,6 @@ Observa la imagen y responde ÚNICAMENTE con un objeto JSON (sin markdown):
 {"machineName": "nombre exacto de la máquina en español"}
 Si no reconoces ninguna máquina, usa {"machineName": "No identificada"}.`;
 
-const CACHE_PATH = path.join(process.cwd(), "cache", "machine-responses.json");
-
 function normalizeName(name: string): string {
   return name
     .toLowerCase()
@@ -44,21 +35,6 @@ function normalizeName(name: string): string {
     .replace(/[^a-z0-9 ]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function readCache(): Record<string, AnalysisResult> {
-  try {
-    if (!fs.existsSync(CACHE_PATH)) return {};
-    return JSON.parse(fs.readFileSync(CACHE_PATH, "utf-8")) as Record<string, AnalysisResult>;
-  } catch {
-    return {};
-  }
-}
-
-function writeCache(cache: Record<string, AnalysisResult>): void {
-  const dir = path.dirname(CACHE_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2), "utf-8");
 }
 
 function stripFences(text: string): string {
@@ -129,9 +105,9 @@ export async function POST(request: NextRequest) {
     const normalizedKey = normalizeName(nameOnly.machineName);
 
     // Cache check
-    const cache = readCache();
-    if (cache[normalizedKey]) {
-      return NextResponse.json(cache[normalizedKey]);
+    const cached = getMachineByNormalizedName(normalizedKey);
+    if (cached) {
+      return NextResponse.json(cached);
     }
 
     // Phase 2: full analysis (cache miss only)
@@ -153,15 +129,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Sin respuesta del modelo" }, { status: 500 });
     }
 
-    let parsed: AnalysisResult;
+    let parsed: { machineName: string; muscleGroups: string[]; exercises: Array<{ name: string; targetMuscles: string; execution: string[] }> };
     try {
-      parsed = JSON.parse(stripFences(textBlock.text)) as AnalysisResult;
+      parsed = JSON.parse(stripFences(textBlock.text));
     } catch {
       return NextResponse.json({ error: "No se pudo procesar la respuesta del servidor" }, { status: 500 });
     }
 
-    cache[normalizedKey] = parsed;
-    writeCache(cache);
+    saveMachine(normalizedKey, parsed);
 
     return NextResponse.json(parsed);
   } catch (err) {
