@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { getUserById } from "@/lib/db";
 import { Dumbbell, Calendar, ScanLine, LogIn, LogOut, UserRound } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default async function Navbar() {
   const session = await getSession();
@@ -14,14 +15,30 @@ export default async function Navbar() {
       </Link>
 
       <div className="flex items-center gap-1">
-        <NavLink href="/machines" icon={<Dumbbell size={18} />} label="Máquinas" />
+        <Button asChild variant="ghost" size="sm">
+          <Link href="/machines" className="flex items-center gap-1.5">
+            <Dumbbell size={18} />
+            <span className="hidden sm:inline">Máquinas</span>
+          </Link>
+        </Button>
+
         {user?.analyzer_enabled === 1 && (
-          <NavLink href="/analyze" icon={<ScanLine size={18} />} label="Analizar" />
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/analyze" className="flex items-center gap-1.5">
+              <ScanLine size={18} />
+              <span className="hidden sm:inline">Analizar</span>
+            </Link>
+          </Button>
         )}
 
         {session ? (
           <>
-            <NavLink href="/routines" icon={<Calendar size={18} />} label="Rutinas" />
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/routines" className="flex items-center gap-1.5">
+                <Calendar size={18} />
+                <span className="hidden sm:inline">Rutinas</span>
+              </Link>
+            </Button>
             <span className="hidden sm:flex items-center gap-1.5 px-2 py-1.5 text-sm text-gray-500">
               <UserRound size={14} />
               <span className="max-w-24 truncate">{session.username}</span>
@@ -29,36 +46,15 @@ export default async function Navbar() {
             <LogoutButton />
           </>
         ) : (
-          <Link
-            href="/login"
-            className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium hover:bg-indigo-500 transition-colors ml-1"
-          >
-            <LogIn size={16} />
-            <span className="hidden sm:inline">Entrar</span>
-          </Link>
+          <Button asChild size="sm" className="ml-1">
+            <Link href="/login" className="flex items-center gap-1.5">
+              <LogIn size={16} />
+              <span className="hidden sm:inline">Entrar</span>
+            </Link>
+          </Button>
         )}
       </div>
     </nav>
-  );
-}
-
-function NavLink({
-  href,
-  icon,
-  label,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors text-sm"
-    >
-      {icon}
-      <span className="hidden sm:inline">{label}</span>
-    </Link>
   );
 }
 
@@ -76,7 +72,7 @@ function LogoutButton() {
       <button
         type="submit"
         title="Cerrar sesión"
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors text-sm"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors text-sm font-semibold"
       >
         <LogOut size={18} />
         <span className="hidden sm:inline">Salir</span>

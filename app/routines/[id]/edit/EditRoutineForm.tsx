@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import { MUSCLE_GROUPS } from "@/lib/muscles";
 import { WEEKDAY_LABELS, WEEKDAYS } from "@/lib/weekdays";
 import type { RoutineWithDays } from "@/lib/db";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface DayInput {
   day_number: number;
@@ -93,53 +98,44 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
     <main className="min-h-screen bg-gray-950 text-white">
       <div className="mx-auto max-w-2xl px-6 py-10">
         <div className="mb-6">
-          <Link
-            href={`/routines/${routine.id}`}
-            className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
-          >
-            ← Volver
-          </Link>
+          <Button asChild variant="ghost" size="sm" className="text-gray-500 hover:text-gray-300 px-0">
+            <Link href={`/routines/${routine.id}`}>← Volver</Link>
+          </Button>
         </div>
 
         <h1 className="text-3xl font-bold mb-8">Editar rutina</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              Nombre de la rutina
-            </label>
-            <input
-              type="text"
+          <div className="space-y-1.5">
+            <Label>Nombre de la rutina</Label>
+            <Input
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl bg-gray-900 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"
             />
           </div>
 
           {/* Days */}
           <div className="space-y-4">
             <div>
-              <h2 className="text-sm font-medium text-gray-300 uppercase tracking-widest mb-3">
+              <p className="text-sm font-medium text-gray-300 uppercase tracking-widest mb-3">
                 Días ({days.length}/7)
-              </h2>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {WEEKDAYS.map((wd) => {
                   const isAdded = addedDayNumbers.has(wd.number);
                   return (
-                    <button
+                    <Button
                       key={wd.number}
                       type="button"
+                      variant="outline"
+                      size="sm"
                       disabled={isAdded}
                       onClick={() => addDay(wd.number)}
-                      className={`rounded-lg px-3 py-1.5 text-sm font-medium border transition-colors ${
-                        isAdded
-                          ? "bg-gray-800 border-gray-700 text-gray-600 opacity-40 cursor-not-allowed"
-                          : "bg-gray-800 border-gray-700 text-gray-300 hover:border-indigo-500 hover:text-white"
-                      }`}
+                      className={isAdded ? "opacity-40" : ""}
                     >
                       {wd.short}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -151,69 +147,66 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
               .map((day) => {
                 const i = days.findIndex((d) => d.day_number === day.day_number);
                 return (
-                  <div key={day.day_number} className="rounded-2xl bg-gray-900 border border-gray-800 p-5 space-y-4">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold">
-                        {WEEKDAY_LABELS[day.day_number]?.slice(0, 2)}
-                      </span>
-                      <input
-                        type="text"
-                        value={day.name}
-                        onChange={(e) => updateDay(i, { name: e.target.value })}
-                        className="flex-1 rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeDay(i)}
-                        className="text-gray-600 hover:text-red-400 transition-colors text-sm"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-
-                    <div>
-                      <p className="text-xs text-gray-500 mb-2">Músculos a trabajar</p>
-                      <div className="flex flex-wrap gap-2">
-                        {MUSCLE_GROUPS.map((muscle) => {
-                          const selected = day.target_muscles.includes(muscle);
-                          return (
-                            <button
-                              key={muscle}
-                              type="button"
-                              onClick={() => toggleMuscle(i, muscle)}
-                              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                                selected
-                                  ? "bg-indigo-600 border-indigo-500 text-white"
-                                  : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500"
-                              }`}
-                            >
-                              {muscle}
-                            </button>
-                          );
-                        })}
+                  <Card key={day.day_number}>
+                    <CardContent className="pt-5 space-y-4">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold">
+                          {WEEKDAY_LABELS[day.day_number]?.slice(0, 2)}
+                        </span>
+                        <Input
+                          value={day.name}
+                          onChange={(e) => updateDay(i, { name: e.target.value })}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeDay(i)}
+                          className="text-gray-600 hover:text-red-400"
+                        >
+                          Eliminar
+                        </Button>
                       </div>
-                    </div>
-                  </div>
+
+                      <div>
+                        <p className="text-xs text-gray-500 mb-2">Músculos a trabajar</p>
+                        <div className="flex flex-wrap gap-2">
+                          {MUSCLE_GROUPS.map((muscle) => {
+                            const selected = day.target_muscles.includes(muscle);
+                            return (
+                              <Button
+                                key={muscle}
+                                type="button"
+                                size="sm"
+                                variant={selected ? "default" : "outline"}
+                                onClick={() => toggleMuscle(i, muscle)}
+                                className="rounded-full text-xs h-auto py-1"
+                              >
+                                {muscle}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 );
               })}
           </div>
 
           {error && (
-            <div className="rounded-xl bg-red-900/40 border border-red-700 px-4 py-3 text-sm text-red-300">
-              {error}
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-indigo-600 py-3.5 font-semibold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-          >
+          <Button type="submit" disabled={loading} className="w-full" size="lg">
             {loading && (
               <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             )}
             Guardar cambios
-          </button>
+          </Button>
         </form>
       </div>
     </main>

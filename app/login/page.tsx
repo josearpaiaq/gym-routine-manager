@@ -4,6 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 function LoginForm() {
   const router = useRouter();
@@ -20,19 +24,19 @@ function LoginForm() {
     try {
       setError(null);
       setLoading(true);
-  
+
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier, password }),
       });
-  
+
       const data = await res.json();
-  
+
       if (!res.ok) {
         throw new Error(data.error ?? "Error al iniciar sesión");
       }
-  
+
       router.push(from);
       router.refresh();
     } catch (error) {
@@ -54,59 +58,49 @@ function LoginForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="identifier" className="block text-sm font-medium text-gray-300 mb-1.5">
-              Email o usuario
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="identifier">Email o usuario</Label>
+            <Input
               id="identifier"
               type="text"
               required
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              className="w-full rounded-xl bg-gray-900 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"
               placeholder="Correo electrónico o usuario"
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1.5">
-              Contraseña
-            </label>
-            <input
+          <div className="space-y-1.5">
+            <Label htmlFor="password">Contraseña</Label>
+            <Input
               id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl bg-gray-900 border border-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <div className="rounded-xl bg-red-900/40 border border-red-700 px-4 py-3 text-sm text-red-300">
-              {error}
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-indigo-600 py-3.5 font-semibold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-          >
+          <Button type="submit" disabled={loading} className="w-full" size="lg">
             {loading && (
               <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             )}
             Iniciar sesión
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
           ¿No tienes cuenta?{" "}
-          <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-            Regístrate
-          </Link>
+          <Button variant="link" asChild className="text-sm p-0">
+            <Link href="/signup">Regístrate</Link>
+          </Button>
         </p>
       </div>
     </main>

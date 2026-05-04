@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMachineById } from "@/lib/db";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,13 +29,13 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
 
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10">
         <div className="mb-6">
-          <Link href="/machines" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
-            ← Máquinas
-          </Link>
+          <Button asChild variant="ghost" size="sm" className="text-gray-500 hover:text-gray-300 px-0">
+            <Link href="/machines">← Máquinas</Link>
+          </Button>
         </div>
 
         {/* Machine header */}
-        <div className="rounded-2xl bg-gray-900 border border-gray-800 overflow-hidden mb-6">
+        <Card className="overflow-hidden mb-6">
           {machine.image_path && (
             <div className="w-full h-52 relative">
               <Image
@@ -43,28 +46,23 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
               />
             </div>
           )}
-          <div className="p-5">
+          <CardContent className={machine.image_path ? "pt-5" : "pt-5 pb-5"}>
             <h1 className="text-2xl font-bold">{machine.canonical_name}</h1>
             {machine.muscle_groups.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {machine.muscle_groups.map((muscle) => (
-                  <span
-                    key={muscle}
-                    className="rounded-full bg-indigo-900/60 border border-indigo-700 px-3 py-0.5 text-xs font-medium text-indigo-300"
-                  >
-                    {muscle}
-                  </span>
+                  <Badge key={muscle}>{muscle}</Badge>
                 ))}
               </div>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Exercises */}
         <div className="space-y-3">
-          <h2 className="text-xs uppercase tracking-widest text-gray-400 font-semibold px-1">
+          <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold px-1">
             Ejercicios ({machine.exercises.length})
-          </h2>
+          </p>
           {machine.exercises.length === 0 ? (
             <p className="text-sm text-gray-600 px-1">
               No hay ejercicios registrados para esta máquina.
@@ -75,13 +73,9 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
                 highlightMuscles.length > 0 &&
                 highlightMuscles.some((hm) => ex.target_muscles.toLowerCase().includes(hm));
               return (
-                <div
+                <Card
                   key={ex.id}
-                  className={`rounded-2xl p-5 space-y-2 border ${
-                    isHighlighted
-                      ? "bg-indigo-900/20 border-indigo-700"
-                      : "bg-gray-900 border-gray-800"
-                  }`}
+                  className={`p-5 space-y-2 ${isHighlighted ? "bg-indigo-900/20 border-indigo-700" : ""}`}
                 >
                   <div className="flex items-start gap-3">
                     <span
@@ -96,9 +90,7 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
                       <p className="text-xs text-indigo-300 mt-0.5">{ex.target_muscles}</p>
                     </div>
                     {isHighlighted && (
-                      <span className="text-xs bg-indigo-600 text-white px-2 py-0.5 rounded-full shrink-0">
-                        Recomendado
-                      </span>
+                      <Badge variant="active" className="shrink-0">Recomendado</Badge>
                     )}
                   </div>
                   <ol className="pl-10 space-y-1.5 list-none">
@@ -109,7 +101,7 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
                       </li>
                     ))}
                   </ol>
-                </div>
+                </Card>
               );
             })
           )}

@@ -3,6 +3,10 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface Exercise {
   name: string;
@@ -71,9 +75,9 @@ export default function AnalyzeForm() {
     <main className="min-h-screen bg-gray-950 text-white">
       <div className="mx-auto max-w-lg px-4 py-10">
         <div className="mb-6">
-          <Link href="/" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
-            ← Volver
-          </Link>
+          <Button asChild variant="ghost" size="sm" className="text-gray-500 hover:text-gray-300 px-0">
+            <Link href="/">← Volver</Link>
+          </Button>
         </div>
 
         <div className="mb-8 text-center">
@@ -123,10 +127,11 @@ export default function AnalyzeForm() {
 
         {imagePreview && !result && (
           <div className="mt-4 flex gap-3">
-            <button
+            <Button
               onClick={handleAnalyze}
               disabled={loading}
-              className="flex-1 rounded-xl bg-indigo-600 px-6 py-3.5 font-semibold text-white hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className="flex-1"
+              size="lg"
             >
               {loading ? (
                 <>
@@ -136,85 +141,78 @@ export default function AnalyzeForm() {
               ) : (
                 "Analizar máquina"
               )}
-            </button>
-            <button
-              onClick={handleReset}
-              className="rounded-xl bg-gray-800 px-4 py-3.5 text-sm font-medium hover:bg-gray-700 transition-colors"
-            >
+            </Button>
+            <Button onClick={handleReset} variant="secondary" size="lg">
               Limpiar
-            </button>
+            </Button>
           </div>
         )}
 
         {error && (
-          <div className="mt-4 rounded-xl bg-red-900/40 border border-red-700 px-4 py-3 text-sm text-red-300">
-            {error}
-          </div>
+          <Alert variant="destructive" className="mt-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {result && (
           <div className="mt-6 space-y-5">
-            <div className="rounded-2xl bg-gray-900 p-5">
-              <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-1">
-                Máquina identificada
-              </p>
-              <h2 className="text-2xl font-bold">{result.machineName}</h2>
-              {result.muscleGroups?.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {result.muscleGroups.map((muscle) => (
-                    <span
-                      key={muscle}
-                      className="rounded-full bg-indigo-900/60 border border-indigo-700 px-3 py-0.5 text-xs font-medium text-indigo-300"
-                    >
-                      {muscle}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
+            <Card>
+              <CardContent className="pt-5">
+                <p className="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-1">
+                  Máquina identificada
+                </p>
+                <h2 className="text-2xl font-bold">{result.machineName}</h2>
+                {result.muscleGroups?.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.muscleGroups.map((muscle) => (
+                      <Badge key={muscle}>{muscle}</Badge>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             <div className="space-y-3">
               <h3 className="text-xs uppercase tracking-widest text-gray-400 font-semibold px-1">
                 Ejercicios recomendados
               </h3>
               {result.exercises.map((ex, i) => (
-                <div key={i} className="rounded-2xl bg-gray-900 p-5 space-y-2">
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold">
-                      {i + 1}
-                    </span>
-                    <div className="min-w-0">
-                      <h4 className="font-semibold text-white leading-tight">{ex.name}</h4>
-                      <p className="text-xs text-indigo-300 mt-0.5">{ex.targetMuscles}</p>
+                <Card key={i}>
+                  <CardContent className="pt-5 space-y-2">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold">
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0">
+                        <h4 className="font-semibold text-white leading-tight">{ex.name}</h4>
+                        <p className="text-xs text-indigo-300 mt-0.5">{ex.targetMuscles}</p>
+                      </div>
                     </div>
-                  </div>
-                  <ol className="pl-10 space-y-1.5 list-none">
-                    {ex.execution.map((step, j) => (
-                      <li key={j} className="flex gap-2 text-sm text-gray-300 leading-relaxed">
-                        <span className="shrink-0 font-medium text-indigo-400">{j + 1}.</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-                  <a
-                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " tutorial gym")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 pl-10 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                  >
-                    <span aria-hidden="true">▶</span>
-                    Ver tutorial
-                  </a>
-                </div>
+                    <ol className="pl-10 space-y-1.5 list-none">
+                      {ex.execution.map((step, j) => (
+                        <li key={j} className="flex gap-2 text-sm text-gray-300 leading-relaxed">
+                          <span className="shrink-0 font-medium text-indigo-400">{j + 1}.</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                    <a
+                      href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " tutorial gym")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 pl-10 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                    >
+                      <span aria-hidden="true">▶</span>
+                      Ver tutorial
+                    </a>
+                  </CardContent>
+                </Card>
               ))}
             </div>
 
-            <button
-              onClick={handleReset}
-              className="w-full rounded-xl bg-gray-800 py-3 text-sm font-medium hover:bg-gray-700 transition-colors"
-            >
+            <Button onClick={handleReset} variant="secondary" className="w-full">
               Analizar otra máquina
-            </button>
+            </Button>
           </div>
         )}
       </div>

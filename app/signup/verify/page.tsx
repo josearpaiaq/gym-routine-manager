@@ -3,6 +3,8 @@
 import { useState, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 function VerifyForm() {
   const router = useRouter();
@@ -48,21 +50,20 @@ function VerifyForm() {
       }
       setError(null);
       setLoading(true);
-  
+
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code }),
       });
-  
+
       const data = await res.json();
       setLoading(false);
-  
+
       if (!res.ok) {
         throw new Error(data.error ?? "Código inválido");
-        return;
       }
-  
+
       router.push("/routines");
       router.refresh();
     } catch (error) {
@@ -122,21 +123,17 @@ function VerifyForm() {
           </div>
 
           {error && (
-            <div className="rounded-xl bg-red-900/40 border border-red-700 px-4 py-3 text-sm text-red-300">
-              {error}
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-indigo-600 py-3.5 font-semibold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-          >
+          <Button type="submit" disabled={loading} className="w-full" size="lg">
             {loading && (
               <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             )}
             Verificar
-          </button>
+          </Button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-500">
@@ -145,12 +142,9 @@ function VerifyForm() {
           ) : (
             <>
               ¿No recibiste el código?{" "}
-              <button
-                onClick={handleResend}
-                className="text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
+              <Button variant="link" onClick={handleResend} disabled={loading} className="text-sm p-0">
                 Reenviar
-              </button>
+              </Button>
             </>
           )}
         </div>

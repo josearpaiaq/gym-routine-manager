@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default async function LandingPage() {
   const session = await getSession();
@@ -19,26 +21,17 @@ export default async function LandingPage() {
           Analiza máquinas con IA, crea rutinas personalizadas por grupo muscular y descubre qué máquinas usar cada día.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/analyze"
-            className="rounded-xl bg-indigo-600 px-6 py-3.5 font-semibold hover:bg-indigo-500 transition-colors"
-          >
-            Analizar máquina
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/analyze">Analizar máquina</Link>
+          </Button>
           {session ? (
-            <Link
-              href="/routines"
-              className="rounded-xl bg-gray-800 px-6 py-3.5 font-semibold hover:bg-gray-700 transition-colors"
-            >
-              Ver mis rutinas
-            </Link>
+            <Button asChild size="lg" variant="secondary">
+              <Link href="/routines">Ver mis rutinas</Link>
+            </Button>
           ) : (
-            <Link
-              href="/signup"
-              className="rounded-xl bg-gray-800 px-6 py-3.5 font-semibold hover:bg-gray-700 transition-colors"
-            >
-              Crear cuenta gratis
-            </Link>
+            <Button asChild size="lg" variant="secondary">
+              <Link href="/signup">Crear cuenta gratis</Link>
+            </Button>
           )}
         </div>
       </section>
@@ -80,15 +73,16 @@ function FeatureCard({
   href: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="group rounded-2xl bg-gray-900 border border-gray-800 p-6 hover:border-indigo-700 transition-colors"
-    >
-      <span className="text-3xl">{icon}</span>
-      <h3 className="mt-3 font-semibold text-white group-hover:text-indigo-300 transition-colors">
-        {title}
-      </h3>
-      <p className="mt-2 text-sm text-gray-400">{description}</p>
+    <Link href={href} className="group">
+      <Card className="h-full p-6 hover:border-indigo-700 transition-colors">
+        <CardContent className="p-0 space-y-2">
+          <span className="text-3xl">{icon}</span>
+          <h3 className="font-semibold text-white group-hover:text-indigo-300 transition-colors">
+            {title}
+          </h3>
+          <p className="text-sm text-gray-400">{description}</p>
+        </CardContent>
+      </Card>
     </Link>
   );
 }
