@@ -1,0 +1,168 @@
+"use client";
+
+import { useState, useRef, Suspense } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+
+function VerifyForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") ?? "";
+
+  const [digits, setDigits] = useState(["", "", "", "", "", ""]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [resent, setResent] = useState(false);
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  function handleDigitChange(i: number, value: string) {
+    if (!/^\d?$/.test(value)) return;
+    const next = [...digits];
+    next[i] = value;
+    setDigits(next);
+    if (value && i < 5) inputRefs.current[i + 1]?.focus();
+  }
+
+  function handleKeyDown(i: number, e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Backspace" && !digits[i] && i > 0) {
+      inputRefs.current[i - 1]?.focus();
+    }
+  }
+
+  function handlePaste(e: React.ClipboardEvent) {
+    const text = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!text) return;
+    e.preventDefault();
+    const next = text.split("").concat(Array(6).fill("")).slice(0, 6);
+    setDigits(next);
+    inputRefs.current[Math.min(text.length, 5)]?.focus();
+  }
+
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    try {
+      const code = digits.join("");
+      if (code.length !== 6) {
+        setError("Ingresa el código completo de 6 dígitos");
+        return;
+      }
+      setError(null);
+      setLoading(true);
+  
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code }),
+      });
+  
+      const data = await res.json();
+      setLoading(false);
+  
+      if (!res.ok) {
+        throw new Error(data.error ?? "Código inválido");
+        return;
+      }
+  
+      router.push("/routines");
+      router.refresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Error al registrarse";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    try {
+      setResent(false);
+      setError(null);
+      setLoading(true);
+      await fetch("/api/auth/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setResent(true);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Error al registrarse";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <Link href="/" className="text-2xl font-bold tracking-tight">
+            GymManager
+          </Link>
+          <p className="mt-2 text-gray-400 text-sm">
+            Enviamos un código a <span className="text-white">{email}</span>
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex justify-center gap-3" onPaste={handlePaste}>
+            {digits.map((d, i) => (
+              <input
+                key={i}
+                ref={(el) => { inputRefs.current[i] = el; }}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={d}
+                onChange={(e) => handleDigitChange(i, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(i, e)}
+                className="w-12 h-14 rounded-xl bg-gray-900 border border-gray-700 text-center text-xl font-bold text-white focus:outline-none focus:border-indigo-500 transition-colors"
+              />
+            ))}
+          </div>
+
+          {error && (
+            <div className="rounded-xl bg-red-900/40 border border-red-700 px-4 py-3 text-sm text-red-300">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-indigo-600 py-3.5 font-semibold hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+          >
+            {loading && (
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            )}
+            Verificar
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-gray-500">
+          {resent ? (
+            <span className="text-green-400">Código reenviado</span>
+          ) : (
+            <>
+              ¿No recibiste el código?{" "}
+              <button
+                onClick={handleResend}
+                className="text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
+                Reenviar
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense>
+      <VerifyForm />
+    </Suspense>
+  );
+}
