@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { listMachinesPaged } from "@/lib/db";
 import Navbar from "@/components/Navbar";
@@ -42,24 +43,44 @@ export default async function MachinesPage({ searchParams }: PageProps) {
         ) : (
           <div className="space-y-3">
             {machines.map((machine) => (
-              <div
+              <Link
                 key={machine.id}
-                className="rounded-2xl bg-gray-900 border border-gray-800 px-5 py-4"
+                href={`/machines/${machine.id}`}
+                className="flex items-center gap-4 rounded-2xl bg-gray-900 border border-gray-800 px-5 py-4 hover:border-indigo-700 transition-colors group"
               >
-                <h2 className="font-semibold text-white">{machine.canonical_name}</h2>
-                {machine.muscle_groups.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {machine.muscle_groups.map((m) => (
-                      <span
-                        key={m}
-                        className="rounded-full bg-indigo-900/50 border border-indigo-800 px-2.5 py-0.5 text-xs text-indigo-300"
-                      >
-                        {m}
-                      </span>
-                    ))}
+                {machine.image_path ? (
+                  <div className="relative h-14 w-14 shrink-0 rounded-xl overflow-hidden">
+                    <Image
+                      src={machine.image_path}
+                      alt={machine.canonical_name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gray-800 text-2xl">
+                    🏋️
                   </div>
                 )}
-              </div>
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-semibold text-white group-hover:text-indigo-300 transition-colors truncate">
+                    {machine.canonical_name}
+                  </h2>
+                  {machine.muscle_groups.length > 0 && (
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {machine.muscle_groups.map((m) => (
+                        <span
+                          key={m}
+                          className="rounded-full bg-indigo-900/50 border border-indigo-800 px-2.5 py-0.5 text-xs text-indigo-300"
+                        >
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <span className="text-gray-600 group-hover:text-indigo-400 transition-colors shrink-0">→</span>
+              </Link>
             ))}
           </div>
         )}

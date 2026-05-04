@@ -1,7 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 import mockResponse from "@/fixtures/cable-crossover.json";
-import { getMachineByNormalizedName, saveMachine } from "@/lib/db";
+import { getMachineByNormalizedName, saveMachine, getUserById } from "@/lib/db";
+import { getSession } from "@/lib/auth";
 
 const client = new Anthropic();
 
@@ -41,9 +44,27 @@ function stripFences(text: string): string {
   return text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
 }
 
+async function saveImageToDisk(imageFile: File, normalizedName: string): Promise<string> {
+  const ext = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpeg";
+  const uploadsDir = path.join(process.cwd(), "public", "uploads", "machines");
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  const buffer = Buffer.from(await imageFile.arrayBuffer());
+  fs.writeFileSync(path.join(uploadsDir, `${normalizedName}.${ext}`), buffer);
+  return `/uploads/machines/${normalizedName}.${ext}`;
+}
+
 export async function POST(request: NextRequest) {
   if (process.env.MOCK_ANALYZE === "true") {
     return NextResponse.json(mockResponse);
+  }
+
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+  const user = getUserById(session.userId);
+  if (!user || user.analyzer_enabled !== 1) {
+    return NextResponse.json({ error: "Función no habilitada para tu cuenta" }, { status: 403 });
   }
 
   try {
@@ -104,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     const normalizedKey = normalizeName(nameOnly.machineName);
 
-    // Cache check
+    // Cache check — return existing analysis without re-saving image
     const cached = getMachineByNormalizedName(normalizedKey);
     if (cached) {
       return NextResponse.json(cached);
@@ -136,7 +157,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No se pudo procesar la respuesta del servidor" }, { status: 500 });
     }
 
-    saveMachine(normalizedKey, parsed);
+    // Save image to disk and persist machine with image path
+    const imagePath = await saveImageToDisk(imageFile, normalizedKey);
+    saveMachine(normalizedKey, parsed, imagePath);
 
     return NextResponse.json(parsed);
   } catch (err) {

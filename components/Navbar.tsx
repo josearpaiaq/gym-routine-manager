@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
+import { getUserById } from "@/lib/db";
 import { Dumbbell, Calendar, ScanLine, LogIn, LogOut, UserRound } from "lucide-react";
 
 export default async function Navbar() {
   const session = await getSession();
+  const user = session ? getUserById(session.userId) : null;
 
   return (
     <nav className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-800 bg-gray-950">
@@ -13,7 +15,9 @@ export default async function Navbar() {
 
       <div className="flex items-center gap-1">
         <NavLink href="/machines" icon={<Dumbbell size={18} />} label="Máquinas" />
-        <NavLink href="/analyze" icon={<ScanLine size={18} />} label="Analizar" />
+        {user?.analyzer_enabled === 1 && (
+          <NavLink href="/analyze" icon={<ScanLine size={18} />} label="Analizar" />
+        )}
 
         {session ? (
           <>

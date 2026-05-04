@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MUSCLE_GROUPS } from "@/lib/muscles";
+import { WEEKDAY_LABELS, WEEKDAYS } from "@/lib/weekdays";
 
 interface DayInput {
   day_number: number;
@@ -14,25 +15,19 @@ interface DayInput {
 export default function NewRoutinePage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [days, setDays] = useState<DayInput[]>([
-    { day_number: 1, name: "Día 1", target_muscles: [] },
-  ]);
+  const [days, setDays] = useState<DayInput[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  function addDay() {
+  function addDay(dayNumber: number) {
     setDays((prev) => [
       ...prev,
-      { day_number: prev.length + 1, name: `Día ${prev.length + 1}`, target_muscles: [] },
+      { day_number: dayNumber, name: WEEKDAY_LABELS[dayNumber], target_muscles: [] },
     ]);
   }
 
   function removeDay(i: number) {
-    setDays((prev) =>
-      prev
-        .filter((_, idx) => idx !== i)
-        .map((d, idx) => ({ ...d, day_number: idx + 1 }))
-    );
+    setDays((prev) => prev.filter((_, idx) => idx !== i));
   }
 
   function updateDay(i: number, patch: Partial<DayInput>) {
@@ -57,6 +52,7 @@ export default function NewRoutinePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) { setError("Ingresa un nombre para la rutina"); return; }
+    if (days.length === 0) { setError("Agrega al menos un día a la rutina"); return; }
     if (days.some((d) => !d.name.trim())) { setError("Todos los días necesitan un nombre"); return; }
     if (days.some((d) => d.target_muscles.length === 0)) {
       setError("Cada día debe tener al menos un músculo seleccionado");
@@ -82,6 +78,8 @@ export default function NewRoutinePage() {
 
     router.push(`/routines/${data.id}`);
   }
+
+  const addedDayNumbers = new Set(days.map((d) => d.day_number));
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
@@ -112,67 +110,84 @@ export default function NewRoutinePage() {
 
           {/* Days */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-gray-300 uppercase tracking-widest">
-                Días ({days.length})
+            <div>
+              <h2 className="text-sm font-medium text-gray-300 uppercase tracking-widest mb-3">
+                Días ({days.length}/7)
               </h2>
-              <button
-                type="button"
-                onClick={addDay}
-                className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                + Agregar día
-              </button>
+              <div className="flex flex-wrap gap-2">
+                {WEEKDAYS.map((wd) => {
+                  const isAdded = addedDayNumbers.has(wd.number);
+                  return (
+                    <button
+                      key={wd.number}
+                      type="button"
+                      disabled={isAdded}
+                      onClick={() => addDay(wd.number)}
+                      className={`rounded-lg px-3 py-1.5 text-sm font-medium border transition-colors ${
+                        isAdded
+                          ? "bg-gray-800 border-gray-700 text-gray-600 opacity-40 cursor-not-allowed"
+                          : "bg-gray-800 border-gray-700 text-gray-300 hover:border-indigo-500 hover:text-white"
+                      }`}
+                    >
+                      {wd.short}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {days.map((day, i) => (
-              <div key={i} className="rounded-2xl bg-gray-900 border border-gray-800 p-5 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold">
-                    {day.day_number}
-                  </span>
-                  <input
-                    type="text"
-                    value={day.name}
-                    onChange={(e) => updateDay(i, { name: e.target.value })}
-                    className="flex-1 rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                    placeholder="Nombre del día"
-                  />
-                  {days.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeDay(i)}
-                      className="text-gray-600 hover:text-red-400 transition-colors text-sm"
-                    >
-                      Eliminar
-                    </button>
-                  )}
-                </div>
+            {days
+              .slice()
+              .sort((a, b) => a.day_number - b.day_number)
+              .map((day) => {
+                const i = days.findIndex((d) => d.day_number === day.day_number);
+                return (
+                  <div key={day.day_number} className="rounded-2xl bg-gray-900 border border-gray-800 p-5 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold">
+                        {WEEKDAY_LABELS[day.day_number]?.slice(0, 2)}
+                      </span>
+                      <input
+                        type="text"
+                        value={day.name}
+                        onChange={(e) => updateDay(i, { name: e.target.value })}
+                        className="flex-1 rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                        placeholder="Nombre del día"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeDay(i)}
+                        className="text-gray-600 hover:text-red-400 transition-colors text-sm"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
 
-                <div>
-                  <p className="text-xs text-gray-500 mb-2">Músculos a trabajar</p>
-                  <div className="flex flex-wrap gap-2">
-                    {MUSCLE_GROUPS.map((muscle) => {
-                      const selected = day.target_muscles.includes(muscle);
-                      return (
-                        <button
-                          key={muscle}
-                          type="button"
-                          onClick={() => toggleMuscle(i, muscle)}
-                          className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                            selected
-                              ? "bg-indigo-600 border-indigo-500 text-white"
-                              : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500"
-                          }`}
-                        >
-                          {muscle}
-                        </button>
-                      );
-                    })}
+                    <div>
+                      <p className="text-xs text-gray-500 mb-2">Músculos a trabajar</p>
+                      <div className="flex flex-wrap gap-2">
+                        {MUSCLE_GROUPS.map((muscle) => {
+                          const selected = day.target_muscles.includes(muscle);
+                          return (
+                            <button
+                              key={muscle}
+                              type="button"
+                              onClick={() => toggleMuscle(i, muscle)}
+                              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                                selected
+                                  ? "bg-indigo-600 border-indigo-500 text-white"
+                                  : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500"
+                              }`}
+                            >
+                              {muscle}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
 
           {error && (

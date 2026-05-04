@@ -4,15 +4,20 @@ import { getSession } from "@/lib/auth";
 import { getRoutineByIdForUser, updateRoutine, deleteRoutine } from "@/lib/db";
 
 const daySchema = z.object({
-  day_number: z.number().int().min(1),
+  day_number: z.number().int().min(1).max(7),
   name: z.string().min(1).max(100),
   target_muscles: z.array(z.string()).min(1),
 });
 
-const updateSchema = z.object({
-  name: z.string().min(1).max(100),
-  days: z.array(daySchema).min(1),
-});
+const updateSchema = z
+  .object({
+    name: z.string().min(1).max(100),
+    days: z.array(daySchema).min(1).max(7),
+  })
+  .refine(
+    (data) => new Set(data.days.map((d) => d.day_number)).size === data.days.length,
+    { message: "No se pueden repetir días de la semana en la misma rutina" }
+  );
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();

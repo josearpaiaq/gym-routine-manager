@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { listRoutinesByUser } from "@/lib/db";
+import { listRoutinesByUser, WEEKDAY_LABELS } from "@/lib/db";
 import Navbar from "@/components/Navbar";
 
 export default async function RoutinesPage() {
@@ -65,7 +65,10 @@ export default async function RoutinesPage() {
                         key={day.id}
                         className="rounded-lg bg-gray-800 px-2.5 py-1 text-xs text-gray-400"
                       >
-                        {day.name}
+                        {WEEKDAY_LABELS[day.day_number] ?? `Día ${day.day_number}`}
+                        {day.name !== WEEKDAY_LABELS[day.day_number] && (
+                          <span className="text-gray-600 ml-1">· {day.name}</span>
+                        )}
                       </span>
                     ))}
                     {routine.days.length > 5 && (
