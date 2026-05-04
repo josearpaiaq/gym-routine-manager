@@ -69,14 +69,14 @@ function LogoutButton() {
         redirect("/");
       }}
     >
-      <button
+      <Button
         type="submit"
         title="Cerrar sesión"
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors text-sm font-semibold"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-800 hover:text-white bg-gray-400 transition-colors text-sm font-semibold cursor-pointer"
       >
         <LogOut size={18} />
         <span className="hidden sm:inline">Salir</span>
-      </button>
+      </Button>
     </form>
   );
 }

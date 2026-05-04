@@ -132,7 +132,7 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
                       size="sm"
                       disabled={isAdded}
                       onClick={() => addDay(wd.number)}
-                      className={isAdded ? "opacity-40" : ""}
+                      className={isAdded ? "opacity-40" : "cursor-pointer"}
                     >
                       {wd.short}
                     </Button>
