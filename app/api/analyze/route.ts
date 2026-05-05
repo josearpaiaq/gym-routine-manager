@@ -1,10 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import mockResponse from "@/fixtures/cable-crossover.json";
 import { getMachineByNormalizedName, saveMachine, getUserById } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { uploadImageToR2 } from "@/lib/r2";
 
 const client = new Anthropic();
 
@@ -44,14 +43,6 @@ function stripFences(text: string): string {
   return text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
 }
 
-async function saveImageToDisk(imageFile: File, normalizedName: string): Promise<string> {
-  const ext = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpeg";
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "machines");
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  const buffer = Buffer.from(await imageFile.arrayBuffer());
-  fs.writeFileSync(path.join(uploadsDir, `${normalizedName}.${ext}`), buffer);
-  return `/uploads/machines/${normalizedName}.${ext}`;
-}
 
 export async function POST(request: NextRequest) {
   if (process.env.MOCK_ANALYZE === "true") {
@@ -157,8 +148,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No se pudo procesar la respuesta del servidor" }, { status: 500 });
     }
 
-    // Save image to disk and persist machine with image path
-    const imagePath = await saveImageToDisk(imageFile, normalizedKey);
+    // Upload image to R2 and persist machine with public URL
+    const imagePath = await uploadImageToR2(imageFile, normalizedKey);
     await saveMachine(normalizedKey, parsed, imagePath);
 
     return NextResponse.json(parsed);
