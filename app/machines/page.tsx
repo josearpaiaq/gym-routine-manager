@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { listMachinesPaged } from "@/lib/db";
+import { listMachinesPaged } from "@/services/machines";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

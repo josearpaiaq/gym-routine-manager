@@ -1,7 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import mockResponse from "@/fixtures/cable-crossover.json";
-import { getMachineByNormalizedName, saveMachine, getUserById } from "@/lib/db";
+import { getMachineByNormalizedName, saveMachine } from "@/services/machines";
+import { getUserById } from "@/services/users";
 import { getSession } from "@/lib/auth";
 import { uploadImageToR2 } from "@/lib/r2";
 

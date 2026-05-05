@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { getUserById } from "@/lib/db";
+import { getUserById } from "@/services/users";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import AnalyzeForm from "./AnalyzeForm";

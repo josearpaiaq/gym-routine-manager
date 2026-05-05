@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth";
-import { getRoutineByIdForUser, updateRoutine, deleteRoutine } from "@/lib/db";
+import { getRoutineByIdForUser, updateRoutine, deleteRoutine } from "@/services/routines";
 
 const daySchema = z.object({
   day_number: z.number().int().min(1).max(7),

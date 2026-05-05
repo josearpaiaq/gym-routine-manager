@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import {
-  getRoutineByIdForUser,
-  getMachinesByMuscles,
-  WEEKDAY_LABELS,
-} from "@/lib/db";
+import { getRoutineByIdForUser } from "@/services/routines";
+import { getMachinesByMuscles } from "@/services/machines";
+import { WEEKDAY_LABELS } from "@/constants/weekdays";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

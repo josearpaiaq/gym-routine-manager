@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { getRoutineByIdForUser, getMachinesByMuscles } from "@/lib/db";
+import { getRoutineByIdForUser } from "@/services/routines";
+import { getMachinesByMuscles } from "@/services/machines";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listMachinesPaged } from "@/lib/db";
+import { listMachinesPaged } from "@/services/machines";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;

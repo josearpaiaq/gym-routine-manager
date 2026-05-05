@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getUserByEmail, markEmailVerified, verifyOtp } from "@/lib/db";
+import { getUserByEmail, markEmailVerified } from "@/services/users";
+import { verifyOtp } from "@/services/otp";
 import { setSessionCookie } from "@/lib/auth";
 
 const schema = z.object({

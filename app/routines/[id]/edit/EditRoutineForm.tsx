@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MUSCLE_GROUPS } from "@/lib/muscles";
-import { WEEKDAY_LABELS, WEEKDAYS } from "@/lib/weekdays";
-import type { RoutineWithDays } from "@/lib/db";
+import { MUSCLE_GROUPS } from "@/constants/muscles";
+import { WEEKDAY_LABELS, WEEKDAYS } from "@/constants/weekdays";
+import type { RoutineWithDays } from "@/services/routines";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

@@ -1,6 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { getRoutineByIdForUser } from "@/lib/db";
+import { getRoutineByIdForUser } from "@/services/routines";
 import EditRoutineForm from "./EditRoutineForm";
 
 interface PageProps {

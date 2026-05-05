@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getUserByEmail, createOtp } from "@/lib/db";
+import { getUserByEmail } from "@/services/users";
+import { createOtp } from "@/services/otp";
 import { sendOtpEmail } from "@/lib/email";
 
 const schema = z.object({ email: z.email() });

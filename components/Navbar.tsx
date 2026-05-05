@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
-import { getUserById } from "@/lib/db";
+import { getUserById } from "@/services/users";
 import { Dumbbell, Calendar, ScanLine, LogIn, LogOut, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

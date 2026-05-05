@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { createUser, getUserByEmail, createOtp } from "@/lib/db";
+import { createUser, getUserByEmail } from "@/services/users";
+import { createOtp } from "@/services/otp";
 import { sendOtpEmail } from "@/lib/email";
 
 const schema = z.object({

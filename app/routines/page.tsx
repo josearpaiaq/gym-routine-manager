@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { listRoutinesByUser, WEEKDAY_LABELS } from "@/lib/db";
+import { listRoutinesByUser } from "@/services/routines";
+import { WEEKDAY_LABELS } from "@/constants/weekdays";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

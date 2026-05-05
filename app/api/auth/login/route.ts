@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { getUserByUsernameOrEmail } from "@/lib/db";
+import { getUserByUsernameOrEmail } from "@/services/users";
 import { setSessionCookie } from "@/lib/auth";
 
 const schema = z.object({
