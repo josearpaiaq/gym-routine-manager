@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, numeric, pgTable, serial, text, timestamp, unique } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -59,19 +59,25 @@ export const routineDays = pgTable("routine_days", {
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
-export const routineMachines = pgTable("routine_machines", {
-  id: serial("id").primaryKey(),
-  routineId: integer("routine_id")
-    .notNull()
-    .references(() => routines.id, { onDelete: "cascade" }),
-  machineId: integer("machine_id")
-    .notNull()
-    .references(() => machines.id, { onDelete: "cascade" }),
-  sets: integer("sets"),
-  reps: text("reps"),
-  notes: text("notes"),
-  sortOrder: integer("sort_order").notNull().default(0),
-});
+export const routineMachines = pgTable(
+  "routine_machines",
+  {
+    id: serial("id").primaryKey(),
+    dayId: integer("day_id")
+      .notNull()
+      .references(() => routineDays.id, { onDelete: "cascade" }),
+    machineId: integer("machine_id")
+      .notNull()
+      .references(() => machines.id, { onDelete: "cascade" }),
+    sets: integer("sets"),
+    reps: text("reps"),
+    weightKg: numeric("weight_kg", { precision: 5, scale: 2 }),
+    restSeconds: integer("rest_seconds"),
+    notes: text("notes"),
+    sortOrder: integer("sort_order").notNull().default(0),
+  },
+  (t) => [unique().on(t.dayId, t.machineId)]
+);
 
 export type User = typeof users.$inferSelect;
 export type OtpCode = typeof otpCodes.$inferSelect;
@@ -79,3 +85,4 @@ export type Machine = typeof machines.$inferSelect;
 export type Exercise = typeof exercises.$inferSelect;
 export type Routine = typeof routines.$inferSelect;
 export type RoutineDay = typeof routineDays.$inferSelect;
+export type RoutineMachine = typeof routineMachines.$inferSelect;
