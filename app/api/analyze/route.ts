@@ -5,6 +5,7 @@ import { getMachineByNormalizedName, saveMachine } from "@/services/machines";
 import { getUserById } from "@/services/users";
 import { getSession } from "@/lib/auth";
 import { uploadImageToR2 } from "@/lib/r2";
+import { normalizeName, stripFences } from "@/lib/analyze-utils";
 
 const client = new Anthropic();
 
@@ -34,22 +35,6 @@ Observa la imagen y responde ÚNICAMENTE con un objeto JSON (sin markdown):
 Si la imagen NO muestra una máquina de ejercicio de gym, responde:
 {"machineName": "No identificada", "isGymMachine": false}`;
 
-function normalizeName(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9 ]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function stripFences(text: string): string {
-  return text
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/, "");
-}
 
 export async function POST(request: NextRequest) {
   if (process.env.MOCK_ANALYZE === "true") {
