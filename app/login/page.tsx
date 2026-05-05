@@ -13,6 +13,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") ?? "/routines";
+  const resetSuccess = searchParams.get("reset") === "ok";
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -71,7 +72,12 @@ function LoginForm() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password">Contraseña</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Contraseña</Label>
+              <Link href="/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"
@@ -81,6 +87,14 @@ function LoginForm() {
               placeholder="••••••••"
             />
           </div>
+
+          {resetSuccess && (
+            <Alert>
+              <AlertDescription className="text-green-400">
+                Contraseña restablecida con éxito. Ya puedes iniciar sesión.
+              </AlertDescription>
+            </Alert>
+          )}
 
           {error && (
             <Alert variant="destructive">
