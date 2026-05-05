@@ -4,7 +4,11 @@ import { users, type User } from "@/db/schema";
 
 export type { User };
 
-export async function createUser(username: string, email: string, passwordHash: string): Promise<User> {
+export async function createUser(
+  username: string,
+  email: string,
+  passwordHash: string
+): Promise<User> {
   const [user] = await db.insert(users).values({ username, email, passwordHash }).returning();
   return user;
 }

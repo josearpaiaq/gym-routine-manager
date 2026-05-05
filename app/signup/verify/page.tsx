@@ -110,7 +110,9 @@ function VerifyForm() {
             {digits.map((d, i) => (
               <input
                 key={i}
-                ref={(el) => { inputRefs.current[i] = el; }}
+                ref={(el) => {
+                  inputRefs.current[i] = el;
+                }}
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
@@ -142,7 +144,12 @@ function VerifyForm() {
           ) : (
             <>
               ¿No recibiste el código?{" "}
-              <Button variant="link" onClick={handleResend} disabled={loading} className="text-sm p-0">
+              <Button
+                variant="link"
+                onClick={handleResend}
+                disabled={loading}
+                className="text-sm p-0"
+              >
                 Reenviar
               </Button>
             </>

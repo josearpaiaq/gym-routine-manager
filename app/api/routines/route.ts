@@ -14,10 +14,9 @@ const createSchema = z
     name: z.string().min(1).max(100),
     days: z.array(daySchema).min(1).max(7),
   })
-  .refine(
-    (data) => new Set(data.days.map((d) => d.day_number)).size === data.days.length,
-    { message: "No se pueden repetir días de la semana en la misma rutina" }
-  );
+  .refine((data) => new Set(data.days.map((d) => d.day_number)).size === data.days.length, {
+    message: "No se pueden repetir días de la semana en la misma rutina",
+  });
 
 export async function GET() {
   const session = await getSession();

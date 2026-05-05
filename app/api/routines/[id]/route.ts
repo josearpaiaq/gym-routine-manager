@@ -14,10 +14,9 @@ const updateSchema = z
     name: z.string().min(1).max(100),
     days: z.array(daySchema).min(1).max(7),
   })
-  .refine(
-    (data) => new Set(data.days.map((d) => d.day_number)).size === data.days.length,
-    { message: "No se pueden repetir días de la semana en la misma rutina" }
-  );
+  .refine((data) => new Set(data.days.map((d) => d.day_number)).size === data.days.length, {
+    message: "No se pueden repetir días de la semana en la misma rutina",
+  });
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
@@ -53,7 +52,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 

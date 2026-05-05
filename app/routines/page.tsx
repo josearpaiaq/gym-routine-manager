@@ -51,7 +51,9 @@ export default async function RoutinesPage() {
                         {routine.days.length} día{routine.days.length !== 1 ? "s" : ""}
                       </p>
                     </div>
-                    <span className="text-gray-600 group-hover:text-indigo-400 transition-colors">→</span>
+                    <span className="text-gray-600 group-hover:text-indigo-400 transition-colors">
+                      →
+                    </span>
                   </div>
                   {routine.days.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">

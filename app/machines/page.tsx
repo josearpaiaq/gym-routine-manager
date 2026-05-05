@@ -68,7 +68,9 @@ export default async function MachinesPage({ searchParams }: PageProps) {
                       </div>
                     )}
                   </div>
-                  <span className="text-gray-600 group-hover:text-indigo-400 transition-colors shrink-0">→</span>
+                  <span className="text-gray-600 group-hover:text-indigo-400 transition-colors shrink-0">
+                    →
+                  </span>
                 </Card>
               </Link>
             ))}
@@ -82,7 +84,9 @@ export default async function MachinesPage({ searchParams }: PageProps) {
                 <Link href={`/machines?page=${page - 1}`}>← Anterior</Link>
               </Button>
             )}
-            <span className="text-sm text-gray-500">{page} / {totalPages}</span>
+            <span className="text-sm text-gray-500">
+              {page} / {totalPages}
+            </span>
             {page < totalPages && (
               <Button asChild variant="secondary" size="sm">
                 <Link href={`/machines?page=${page + 1}`}>Siguiente →</Link>

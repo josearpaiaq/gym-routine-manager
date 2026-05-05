@@ -14,8 +14,7 @@ export default function DeleteButton({ routineId }: { routineId: number }) {
   async function handleDelete() {
     const [confirmed] = await confirm({
       title: "¿Eliminar rutina?",
-      message:
-        "Esta acción no se puede deshacer. Se eliminará la rutina y todos sus días.",
+      message: "Esta acción no se puede deshacer. Se eliminará la rutina y todos sus días.",
       confirmLabel: "Sí, eliminar",
     });
     if (!confirmed) return;
@@ -32,9 +31,7 @@ export default function DeleteButton({ routineId }: { routineId: number }) {
       }
       router.push("/routines");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Error al eliminar la rutina",
-      );
+      setError(err instanceof Error ? err.message : "Error al eliminar la rutina");
       setLoading(false);
     }
   }

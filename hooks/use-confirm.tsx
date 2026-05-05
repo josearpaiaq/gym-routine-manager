@@ -17,16 +17,13 @@ export function useConfirm() {
   const [options, setOptions] = useState<ConfirmOptions | null>(null);
   const resolveRef = useRef<((result: ConfirmResult) => void) | null>(null);
 
-  const confirm = useCallback(
-    (opts: ConfirmOptions): Promise<ConfirmResult> => {
-      setOptions(opts);
-      setOpen(true);
-      return new Promise((resolve) => {
-        resolveRef.current = resolve;
-      });
-    },
-    [],
-  );
+  const confirm = useCallback((opts: ConfirmOptions): Promise<ConfirmResult> => {
+    setOptions(opts);
+    setOpen(true);
+    return new Promise((resolve) => {
+      resolveRef.current = resolve;
+    });
+  }, []);
 
   function handleConfirm() {
     setOpen(false);
@@ -51,9 +48,7 @@ export function useConfirm() {
           onClick={(e) => e.stopPropagation()}
         >
           <h2 className="text-lg font-semibold text-white">{options.title}</h2>
-          {options.message && (
-            <p className="mt-2 text-sm text-gray-400">{options.message}</p>
-          )}
+          {options.message && <p className="mt-2 text-sm text-gray-400">{options.message}</p>}
           <div className="mt-6 flex justify-end gap-3">
             <Button
               variant="secondary"

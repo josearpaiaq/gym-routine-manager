@@ -30,7 +30,10 @@ export async function POST(request: NextRequest) {
   }
 
   if (!user.emailVerified) {
-    return NextResponse.json({ error: "Email no verificado. Revisa tu bandeja de entrada." }, { status: 403 });
+    return NextResponse.json(
+      { error: "Email no verificado. Revisa tu bandeja de entrada." },
+      { status: 403 }
+    );
   }
 
   const valid = await bcrypt.compare(password, user.passwordHash);

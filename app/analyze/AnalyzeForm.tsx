@@ -75,7 +75,12 @@ export default function AnalyzeForm() {
     <main className="min-h-screen bg-gray-950 text-white">
       <div className="mx-auto max-w-lg px-4 py-10">
         <div className="mb-6">
-          <Button asChild variant="ghost" size="sm" className="text-gray-500 hover:text-gray-300 px-0">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-gray-500 hover:text-gray-300 px-0"
+          >
             <Link href="/">← Volver</Link>
           </Button>
         </div>
@@ -127,12 +132,7 @@ export default function AnalyzeForm() {
 
         {imagePreview && !result && (
           <div className="mt-4 flex gap-3">
-            <Button
-              onClick={handleAnalyze}
-              disabled={loading}
-              className="flex-1"
-              size="lg"
-            >
+            <Button onClick={handleAnalyze} disabled={loading} className="flex-1" size="lg">
               {loading ? (
                 <>
                   <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
