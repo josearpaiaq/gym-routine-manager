@@ -7,7 +7,7 @@ export async function sendOtpEmail(email: string, code: string): Promise<void> {
     console.log(`\n[OTP] ${email} → ${code}\n`);
   }
   await resend.emails.send({
-    from: "Gym Manager <onboarding@resend.dev>",
+    from: "Gym Manager <onboarding@gymroutinemanager.com>",
     to: email,
     subject: "Tu código de verificación",
     html: `
