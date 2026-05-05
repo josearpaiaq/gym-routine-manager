@@ -1,7 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import mockResponse from "@/fixtures/cable-crossover.json";
-import { getMachineByNormalizedName, saveMachine } from "@/lib/db";
+import { getMachineByNormalizedName, saveMachine } from "@/services/machines";
+import { getUserById } from "@/services/users";
+import { getSession } from "@/lib/auth";
+import { uploadImageToR2 } from "@/lib/r2";
 
 const client = new Anthropic();
 
@@ -41,9 +44,19 @@ function stripFences(text: string): string {
   return text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
 }
 
+
 export async function POST(request: NextRequest) {
   if (process.env.MOCK_ANALYZE === "true") {
     return NextResponse.json(mockResponse);
+  }
+
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+  const user = await getUserById(session.userId);
+  if (!user || !user.analyzerEnabled) {
+    return NextResponse.json({ error: "Función no habilitada para tu cuenta" }, { status: 403 });
   }
 
   try {
@@ -104,8 +117,8 @@ export async function POST(request: NextRequest) {
 
     const normalizedKey = normalizeName(nameOnly.machineName);
 
-    // Cache check
-    const cached = getMachineByNormalizedName(normalizedKey);
+    // Cache check — return existing analysis without re-saving image
+    const cached = await getMachineByNormalizedName(normalizedKey);
     if (cached) {
       return NextResponse.json(cached);
     }
@@ -136,7 +149,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No se pudo procesar la respuesta del servidor" }, { status: 500 });
     }
 
-    saveMachine(normalizedKey, parsed);
+    // Upload image to R2 and persist machine with public URL
+    const imagePath = await uploadImageToR2(imageFile, normalizedKey);
+    await saveMachine(normalizedKey, parsed, imagePath);
 
     return NextResponse.json(parsed);
   } catch (err) {

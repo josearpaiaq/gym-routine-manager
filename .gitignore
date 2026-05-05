@@ -44,4 +44,6 @@ next-env.d.ts
 /cache/
 
 # sqlite database
-/db/
+/db/*.db
+/db/*.db-shm
+/db/*.db-wal
