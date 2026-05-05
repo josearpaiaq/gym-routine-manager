@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { exercises, machines } from "@/db/schema";
 
 export interface AnalysisResult {
+  isGymMachine: boolean;
   machineName: string;
   muscleGroups: string[];
   exercises: Array<{ name: string; targetMuscles: string; execution: string[] }>;
@@ -51,6 +52,7 @@ export async function getMachineByNormalizedName(
     .orderBy(asc(exercises.sortOrder));
 
   return {
+    isGymMachine: machine.isGymMachine,
     machineName: machine.canonicalName,
     muscleGroups: machine.muscleGroups,
     exercises: exs.map((ex) => ({

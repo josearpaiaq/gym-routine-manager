@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,7 @@ export default function AnalyzeForm() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [notAMachine, setNotAMachine] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -33,6 +35,7 @@ export default function AnalyzeForm() {
     if (!file) return;
     setImageFile(file);
     setResult(null);
+    setNotAMachine(false);
     setError(null);
     setImagePreview(URL.createObjectURL(file));
   }
@@ -41,6 +44,7 @@ export default function AnalyzeForm() {
     setImageFile(null);
     setImagePreview(null);
     setResult(null);
+    setNotAMachine(false);
     setError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
@@ -65,6 +69,8 @@ export default function AnalyzeForm() {
     }
     if (!res.ok) {
       setError((data.error as string) ?? "Error al analizar la imagen");
+    } else if (data.isGymMachine === false) {
+      setNotAMachine(true);
     } else {
       setResult(data as unknown as AnalysisResult);
     }
@@ -152,6 +158,28 @@ export default function AnalyzeForm() {
           <Alert variant="destructive" className="mt-4">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
+        )}
+
+        {notAMachine && (
+          <div className="mt-6">
+            <Card className="border-amber-800/40">
+              <CardContent className="pt-6 flex flex-col items-center text-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-900/30">
+                  <ImageOff size={24} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="font-semibold text-amber-300">No es una máquina de gym</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    La imagen no parece ser una máquina de ejercicio. Intenta con una foto más
+                    clara o desde otro ángulo.
+                  </p>
+                </div>
+                <Button onClick={handleReset} variant="secondary" className="mt-1">
+                  Intentar con otra imagen
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {result && (

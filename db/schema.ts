@@ -25,6 +25,7 @@ export const machines = pgTable("machines", {
   normalizedName: text("normalized_name").notNull().unique(),
   muscleGroups: jsonb("muscle_groups").notNull().$type<string[]>(),
   imagePath: text("image_path"),
+  isGymMachine: boolean("is_gym_machine").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
