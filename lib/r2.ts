@@ -17,7 +17,10 @@ const mimeMap: Record<string, string> = {
   webp: "image/webp",
 };
 
-export async function uploadImageToR2(imageFile: File, normalizedName: string): Promise<string> {
+export async function uploadImageToR2(
+  imageFile: File,
+  normalizedName: string,
+): Promise<string> {
   const ext = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpeg";
   const key = `machines/${normalizedName}.${ext}`;
   const buffer = Buffer.from(await imageFile.arrayBuffer());
@@ -28,7 +31,7 @@ export async function uploadImageToR2(imageFile: File, normalizedName: string): 
       Key: key,
       Body: buffer,
       ContentType: mimeMap[ext] ?? imageFile.type ?? "image/jpeg",
-    })
+    }),
   );
 
   return `${process.env.R2_PUBLIC_URL}/${key}`;
