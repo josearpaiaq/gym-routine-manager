@@ -24,13 +24,20 @@ export interface MachineDetail {
 }
 
 export interface MachinePage {
-  machines: Array<{ id: number; canonical_name: string; muscle_groups: string[]; image_path: string | null }>;
+  machines: Array<{
+    id: number;
+    canonical_name: string;
+    muscle_groups: string[];
+    image_path: string | null;
+  }>;
   total: number;
   page: number;
   totalPages: number;
 }
 
-export async function getMachineByNormalizedName(normalizedName: string): Promise<AnalysisResult | null> {
+export async function getMachineByNormalizedName(
+  normalizedName: string
+): Promise<AnalysisResult | null> {
   const [machine] = await db
     .select()
     .from(machines)
@@ -133,12 +140,7 @@ export async function saveMachine(
 export async function listMachinesPaged(page: number, perPage = 10): Promise<MachinePage> {
   const offset = (page - 1) * perPage;
   const [rows, totals] = await Promise.all([
-    db
-      .select()
-      .from(machines)
-      .orderBy(asc(machines.canonicalName))
-      .limit(perPage)
-      .offset(offset),
+    db.select().from(machines).orderBy(asc(machines.canonicalName)).limit(perPage).offset(offset),
     db.select({ total: count() }).from(machines),
   ]);
 
@@ -158,7 +160,9 @@ export async function listMachinesPaged(page: number, perPage = 10): Promise<Mac
 
 export async function getMachinesByMuscles(
   muscles: string[]
-): Promise<Array<{ id: number; canonical_name: string; muscle_groups: string[]; image_path: string | null }>> {
+): Promise<
+  Array<{ id: number; canonical_name: string; muscle_groups: string[]; image_path: string | null }>
+> {
   if (!muscles.length) return [];
   const all = await db.select().from(machines).orderBy(asc(machines.canonicalName));
   const musclesLower = muscles.map((m) => m.toLowerCase());

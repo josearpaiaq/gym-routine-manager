@@ -6,7 +6,11 @@ import { createOtp } from "@/services/otp";
 import { sendOtpEmail } from "@/lib/email";
 
 const schema = z.object({
-  username: z.string().min(3).max(30).regex(/^[a-zA-Z0-9_]+$/),
+  username: z
+    .string()
+    .min(3)
+    .max(30)
+    .regex(/^[a-zA-Z0-9_]+$/),
   email: z.email(),
   password: z.string().min(8),
 });
@@ -53,7 +57,10 @@ export async function POST(request: NextRequest) {
     await sendOtpEmail(email, code);
   } catch (err) {
     console.error("[signup] email send failed:", err);
-    return NextResponse.json({ error: "No se pudo enviar el email de verificación" }, { status: 500 });
+    return NextResponse.json(
+      { error: "No se pudo enviar el email de verificación" },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ ok: true });

@@ -26,7 +26,7 @@ export default async function RoutineDetailPage({ params }: PageProps) {
     routine.days.map(async (day) => ({
       ...day,
       machines: await getMachinesByMuscles(day.target_muscles),
-    })),
+    }))
   );
 
   return (
@@ -50,12 +50,7 @@ export default async function RoutineDetailPage({ params }: PageProps) {
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
-            <Button
-              asChild
-              variant="secondary"
-              size="default"
-              className="rounded-md"
-            >
+            <Button asChild variant="secondary" size="default" className="rounded-md">
               <Link href={`/routines/${routine.id}/edit`}>Editar</Link>
             </Button>
             <DeleteButton routineId={routine.id} />
@@ -69,8 +64,7 @@ export default async function RoutineDetailPage({ params }: PageProps) {
               <div className="px-5 py-4 border-b border-gray-800">
                 <div className="flex items-center gap-3">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold">
-                    {WEEKDAY_LABELS[day.day_number]?.slice(0, 2) ??
-                      day.day_number}
+                    {WEEKDAY_LABELS[day.day_number]?.slice(0, 2) ?? day.day_number}
                   </span>
                   <div>
                     <p className="text-xs text-indigo-400 font-medium leading-none">
@@ -96,11 +90,7 @@ export default async function RoutineDetailPage({ params }: PageProps) {
                 {day.machines.length === 0 ? (
                   <p className="text-sm text-gray-600">
                     No hay máquinas registradas para estos músculos.{" "}
-                    <Button
-                      asChild
-                      variant="link"
-                      className="text-sm p-0 h-auto"
-                    >
+                    <Button asChild variant="link" className="text-sm p-0 h-auto">
                       <Link href="/analyze">Analizar una →</Link>
                     </Button>
                   </p>
@@ -112,15 +102,13 @@ export default async function RoutineDetailPage({ params }: PageProps) {
                         href={`/machines/${m.id}?muscles=${day.target_muscles.join(",")}`}
                         className="flex items-center justify-between rounded-xl bg-gray-800 px-4 py-2.5 border border-transparent hover:border-indigo-700 hover:bg-gray-700 transition-colors"
                       >
-                        <span className="text-sm font-medium text-white">
-                          {m.canonical_name}
-                        </span>
+                        <span className="text-sm font-medium text-white">{m.canonical_name}</span>
                         <div className="flex flex-wrap gap-1 justify-end">
                           {m.muscle_groups
                             .filter((g) =>
                               day.target_muscles
                                 .map((t) => t.toLowerCase())
-                                .includes(g.toLowerCase()),
+                                .includes(g.toLowerCase())
                             )
                             .map((g) => (
                               <Badge

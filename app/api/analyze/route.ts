@@ -41,9 +41,11 @@ function normalizeName(name: string): string {
 }
 
 function stripFences(text: string): string {
-  return text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  return text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "");
 }
-
 
 export async function POST(request: NextRequest) {
   if (process.env.MOCK_ANALYZE === "true") {
@@ -85,7 +87,10 @@ export async function POST(request: NextRequest) {
       | "image/webp";
 
     const imageContent = [
-      { type: "image" as const, source: { type: "base64" as const, media_type: mediaType, data: base64 } },
+      {
+        type: "image" as const,
+        source: { type: "base64" as const, media_type: mediaType, data: base64 },
+      },
     ];
 
     // Phase 1: identify machine name only (cheap call)
@@ -93,13 +98,15 @@ export async function POST(request: NextRequest) {
       model: "claude-sonnet-4-6",
       max_tokens: 50,
       system: NAME_ONLY_PROMPT,
-      messages: [{
-        role: "user",
-        content: [
-          ...imageContent,
-          { type: "text", text: "¿Qué máquina de gimnasio aparece en la imagen?" },
-        ],
-      }],
+      messages: [
+        {
+          role: "user",
+          content: [
+            ...imageContent,
+            { type: "text", text: "¿Qué máquina de gimnasio aparece en la imagen?" },
+          ],
+        },
+      ],
     });
 
     const nameBlock = phase1.content.find((b) => b.type === "text");
@@ -112,7 +119,10 @@ export async function POST(request: NextRequest) {
       nameOnly = JSON.parse(stripFences(nameBlock.text)) as { machineName: string };
     } catch {
       console.error("[analyze] Phase 1 parse failed:", nameBlock.text);
-      return NextResponse.json({ error: "No se pudo procesar la respuesta del servidor" }, { status: 500 });
+      return NextResponse.json(
+        { error: "No se pudo procesar la respuesta del servidor" },
+        { status: 500 }
+      );
     }
 
     const normalizedKey = normalizeName(nameOnly.machineName);
@@ -128,13 +138,18 @@ export async function POST(request: NextRequest) {
       model: "claude-sonnet-4-6",
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      messages: [{
-        role: "user",
-        content: [
-          ...imageContent,
-          { type: "text", text: "Analiza esta máquina de gimnasio y devuelve la información en el formato JSON indicado." },
-        ],
-      }],
+      messages: [
+        {
+          role: "user",
+          content: [
+            ...imageContent,
+            {
+              type: "text",
+              text: "Analiza esta máquina de gimnasio y devuelve la información en el formato JSON indicado.",
+            },
+          ],
+        },
+      ],
     });
 
     const textBlock = phase2.content.find((b) => b.type === "text");
@@ -142,11 +157,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Sin respuesta del modelo" }, { status: 500 });
     }
 
-    let parsed: { machineName: string; muscleGroups: string[]; exercises: Array<{ name: string; targetMuscles: string; execution: string[] }> };
+    let parsed: {
+      machineName: string;
+      muscleGroups: string[];
+      exercises: Array<{ name: string; targetMuscles: string; execution: string[] }>;
+    };
     try {
       parsed = JSON.parse(stripFences(textBlock.text));
     } catch {
-      return NextResponse.json({ error: "No se pudo procesar la respuesta del servidor" }, { status: 500 });
+      return NextResponse.json(
+        { error: "No se pudo procesar la respuesta del servidor" },
+        { status: 500 }
+      );
     }
 
     // Upload image to R2 and persist machine with public URL

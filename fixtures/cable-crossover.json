@@ -1,13 +1,6 @@
 {
   "machineName": "Máquina Functional Trainer / Cable Crossover Doble Polea",
-  "muscleGroups": [
-    "Pectoral",
-    "Deltoides",
-    "Bíceps",
-    "Tríceps",
-    "Core",
-    "Dorsal"
-  ],
+  "muscleGroups": ["Pectoral", "Deltoides", "Bíceps", "Tríceps", "Core", "Dorsal"],
   "exercises": [
     {
       "name": "Cable Crossover (Cruce de Poleas)",

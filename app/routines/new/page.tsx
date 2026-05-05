@@ -56,9 +56,18 @@ export default function NewRoutinePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) { setError("Ingresa un nombre para la rutina"); return; }
-    if (days.length === 0) { setError("Agrega al menos un día a la rutina"); return; }
-    if (days.some((d) => !d.name.trim())) { setError("Todos los días necesitan un nombre"); return; }
+    if (!name.trim()) {
+      setError("Ingresa un nombre para la rutina");
+      return;
+    }
+    if (days.length === 0) {
+      setError("Agrega al menos un día a la rutina");
+      return;
+    }
+    if (days.some((d) => !d.name.trim())) {
+      setError("Todos los días necesitan un nombre");
+      return;
+    }
     if (days.some((d) => d.target_muscles.length === 0)) {
       setError("Cada día debe tener al menos un músculo seleccionado");
       return;
@@ -90,7 +99,12 @@ export default function NewRoutinePage() {
     <main className="min-h-screen bg-gray-950 text-white">
       <div className="mx-auto max-w-2xl px-6 py-10">
         <div className="mb-6">
-          <Button asChild variant="ghost" size="sm" className="text-gray-500 hover:text-gray-300 px-0">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-gray-500 hover:text-gray-300 px-0"
+          >
             <Link href="/routines">← Mis rutinas</Link>
           </Button>
         </div>

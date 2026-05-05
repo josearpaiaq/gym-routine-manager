@@ -20,7 +20,10 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
   if (!machine) notFound();
 
   const highlightMuscles = musclesParam
-    ? musclesParam.split(",").map((m) => m.trim().toLowerCase()).filter(Boolean)
+    ? musclesParam
+        .split(",")
+        .map((m) => m.trim().toLowerCase())
+        .filter(Boolean)
     : [];
 
   return (
@@ -29,7 +32,12 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
 
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10">
         <div className="mb-6">
-          <Button asChild variant="ghost" size="sm" className="text-gray-500 hover:text-gray-300 px-0">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-gray-500 hover:text-gray-300 px-0"
+          >
             <Link href="/machines">← Máquinas</Link>
           </Button>
         </div>
@@ -90,7 +98,9 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
                       <p className="text-xs text-indigo-300 mt-0.5">{ex.target_muscles}</p>
                     </div>
                     {isHighlighted && (
-                      <Badge variant="active" className="shrink-0">Recomendado</Badge>
+                      <Badge variant="active" className="shrink-0">
+                        Recomendado
+                      </Badge>
                     )}
                   </div>
                   <ol className="pl-10 space-y-1.5 list-none">

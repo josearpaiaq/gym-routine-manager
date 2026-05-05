@@ -77,7 +77,10 @@ export async function getRoutineByIdForUser(
   };
 }
 
-export async function createRoutine(userId: number, input: UpsertRoutineInput): Promise<RoutineWithDays> {
+export async function createRoutine(
+  userId: number,
+  input: UpsertRoutineInput
+): Promise<RoutineWithDays> {
   let routineId = 0;
   await db.transaction(async (tx) => {
     const [r] = await tx

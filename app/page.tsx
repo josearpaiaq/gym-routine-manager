@@ -14,11 +14,13 @@ export default async function LandingPage() {
       {/* Hero */}
       <section className="mx-auto max-w-3xl px-6 pt-20 pb-16 text-center">
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight">
-          Tu gym,<br />
+          Tu gym,
+          <br />
           <span className="text-indigo-400">organizado.</span>
         </h1>
         <p className="mt-6 text-base sm:text-lg text-gray-400 max-w-xl mx-auto">
-          Analiza máquinas con IA, crea rutinas personalizadas por grupo muscular y descubre qué máquinas usar cada día.
+          Analiza máquinas con IA, crea rutinas personalizadas por grupo muscular y descubre qué
+          máquinas usar cada día.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg">
