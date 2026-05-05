@@ -7,6 +7,7 @@ const PUBLIC_PREFIXES = ["/api/auth/", "/api/machines", "/_next/", "/favicon"];
 function isPublic(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
   if (pathname.startsWith("/signup/")) return true;
+  if (pathname.startsWith("/forgot-password")) return true;
   return PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 }
 
