@@ -11,7 +11,7 @@ export default async function RoutinesPage() {
   const session = await getSession();
   if (!session) redirect("/login?from=/routines");
 
-  const routines = listRoutinesByUser(session.userId);
+  const routines = await listRoutinesByUser(session.userId);
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">

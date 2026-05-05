@@ -7,12 +7,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const { id } = await params;
-  const routine = getRoutineByIdForUser(parseInt(id, 10), session.userId);
+  const routine = await getRoutineByIdForUser(parseInt(id, 10), session.userId);
   if (!routine) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
 
   // Collect all unique muscles across all days
   const allMuscles = [...new Set(routine.days.flatMap((d) => d.target_muscles))];
-  const machines = getMachinesByMuscles(allMuscles);
+  const machines = await getMachinesByMuscles(allMuscles);
 
   // Group machines by which day muscles they match
   const result = routine.days.map((day) => ({

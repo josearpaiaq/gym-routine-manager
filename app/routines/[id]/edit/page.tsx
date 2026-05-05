@@ -12,7 +12,7 @@ export default async function EditRoutinePage({ params }: PageProps) {
   if (!session) redirect("/login");
 
   const { id } = await params;
-  const routine = getRoutineByIdForUser(parseInt(id, 10), session.userId);
+  const routine = await getRoutineByIdForUser(parseInt(id, 10), session.userId);
   if (!routine) notFound();
 
   return <EditRoutineForm routine={routine} />;

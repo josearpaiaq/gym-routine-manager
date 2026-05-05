@@ -13,7 +13,7 @@ interface PageProps {
 export default async function MachinesPage({ searchParams }: PageProps) {
   const { page: pageParam } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? "1", 10));
-  const { machines, total, totalPages } = listMachinesPaged(page, 10);
+  const { machines, total, totalPages } = await listMachinesPaged(page, 10);
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">

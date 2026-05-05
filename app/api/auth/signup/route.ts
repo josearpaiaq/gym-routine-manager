@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
 
   const { username, email, password } = parsed.data;
 
-  const existing = getUserByEmail(email);
-  if (existing?.email_verified) {
+  const existing = await getUserByEmail(email);
+  if (existing?.emailVerified) {
     return NextResponse.json({ error: "Ya existe una cuenta con ese email" }, { status: 409 });
   }
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
   if (!existing) {
     try {
-      createUser(username, email, passwordHash);
+      await createUser(username, email, passwordHash);
     } catch {
       return NextResponse.json({ error: "El nombre de usuario ya está en uso" }, { status: 409 });
     }
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
   const code = generateOtp();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
-  createOtp(email, code, expiresAt);
+  await createOtp(email, code, expiresAt);
 
   try {
     await sendOtpEmail(email, code);

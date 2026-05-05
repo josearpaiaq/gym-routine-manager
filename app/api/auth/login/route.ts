@@ -24,16 +24,16 @@ export async function POST(request: NextRequest) {
 
   const { identifier, password } = parsed.data;
 
-  const user = getUserByUsernameOrEmail(identifier);
+  const user = await getUserByUsernameOrEmail(identifier);
   if (!user) {
     return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
   }
 
-  if (!user.email_verified) {
+  if (!user.emailVerified) {
     return NextResponse.json({ error: "Email no verificado. Revisa tu bandeja de entrada." }, { status: 403 });
   }
 
-  const valid = await bcrypt.compare(password, user.password_hash);
+  const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
   }

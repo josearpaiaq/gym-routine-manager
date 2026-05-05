@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
   if (!session) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
-  const user = getUserById(session.userId);
-  if (!user || user.analyzer_enabled !== 1) {
+  const user = await getUserById(session.userId);
+  if (!user || !user.analyzerEnabled) {
     return NextResponse.json({ error: "Función no habilitada para tu cuenta" }, { status: 403 });
   }
 
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     const normalizedKey = normalizeName(nameOnly.machineName);
 
     // Cache check — return existing analysis without re-saving image
-    const cached = getMachineByNormalizedName(normalizedKey);
+    const cached = await getMachineByNormalizedName(normalizedKey);
     if (cached) {
       return NextResponse.json(cached);
     }
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
 
     // Save image to disk and persist machine with image path
     const imagePath = await saveImageToDisk(imageFile, normalizedKey);
-    saveMachine(normalizedKey, parsed, imagePath);
+    await saveMachine(normalizedKey, parsed, imagePath);
 
     return NextResponse.json(parsed);
   } catch (err) {

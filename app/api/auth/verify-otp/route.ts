@@ -23,14 +23,14 @@ export async function POST(request: NextRequest) {
 
   const { email, code } = parsed.data;
 
-  const valid = verifyOtp(email, code);
+  const valid = await verifyOtp(email, code);
   if (!valid) {
     return NextResponse.json({ error: "Código inválido o expirado" }, { status: 401 });
   }
 
-  markEmailVerified(email);
+  await markEmailVerified(email);
 
-  const user = getUserByEmail(email);
+  const user = await getUserByEmail(email);
   if (!user) {
     return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
   }

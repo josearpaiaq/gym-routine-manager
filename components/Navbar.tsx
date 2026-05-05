@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default async function Navbar() {
   const session = await getSession();
-  const user = session ? getUserById(session.userId) : null;
+  const user = session ? await getUserById(session.userId) : null;
 
   return (
     <nav className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-800 bg-gray-950">
@@ -22,7 +22,7 @@ export default async function Navbar() {
           </Link>
         </Button>
 
-        {user?.analyzer_enabled === 1 && (
+        {user?.analyzerEnabled && (
           <Button asChild variant="ghost" size="sm">
             <Link href="/analyze" className="flex items-center gap-1.5">
               <ScanLine size={18} />

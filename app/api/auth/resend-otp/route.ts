@@ -24,15 +24,15 @@ export async function POST(request: NextRequest) {
 
   const { email } = parsed.data;
 
-  const user = getUserByEmail(email);
-  if (!user || user.email_verified) {
+  const user = await getUserByEmail(email);
+  if (!user || user.emailVerified) {
     // Don't reveal if email exists
     return NextResponse.json({ ok: true });
   }
 
   const code = generateOtp();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-  createOtp(email, code, expiresAt);
+  await createOtp(email, code, expiresAt);
 
   try {
     await sendOtpEmail(email, code);

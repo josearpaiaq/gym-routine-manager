@@ -23,7 +23,7 @@ export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const routines = listRoutinesByUser(session.userId);
+  const routines = await listRoutinesByUser(session.userId);
   return NextResponse.json(routines);
 }
 
@@ -43,6 +43,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 422 });
   }
 
-  const routine = createRoutine(session.userId, parsed.data);
+  const routine = await createRoutine(session.userId, parsed.data);
   return NextResponse.json(routine, { status: 201 });
 }

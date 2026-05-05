@@ -9,9 +9,9 @@ export default async function AnalyzePage() {
   const session = await getSession();
   if (!session) redirect("/login?from=/analyze");
 
-  const user = getUserById(session.userId);
+  const user = await getUserById(session.userId);
 
-  if (!user || user.analyzer_enabled !== 1) {
+  if (!user || !user.analyzerEnabled) {
     return (
       <main className="min-h-screen bg-gray-950 text-white">
         <Navbar />

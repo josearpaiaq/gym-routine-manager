@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const { id } = await params;
-  const routine = getRoutineByIdForUser(parseInt(id, 10), session.userId);
+  const routine = await getRoutineByIdForUser(parseInt(id, 10), session.userId);
   if (!routine) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
 
   return NextResponse.json(routine);
@@ -47,7 +47,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   const { id } = await params;
-  const ok = updateRoutine(parseInt(id, 10), session.userId, parsed.data);
+  const ok = await updateRoutine(parseInt(id, 10), session.userId, parsed.data);
   if (!ok) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
 
   return NextResponse.json({ ok: true });
@@ -58,7 +58,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const { id } = await params;
-  const ok = deleteRoutine(parseInt(id, 10), session.userId);
+  const ok = await deleteRoutine(parseInt(id, 10), session.userId);
   if (!ok) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
 
   return NextResponse.json({ ok: true });

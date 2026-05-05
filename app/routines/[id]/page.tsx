@@ -16,13 +16,15 @@ export default async function RoutineDetailPage({ params }: PageProps) {
   if (!session) redirect("/login?from=/routines");
 
   const { id } = await params;
-  const routine = getRoutineByIdForUser(parseInt(id, 10), session.userId);
+  const routine = await getRoutineByIdForUser(parseInt(id, 10), session.userId);
   if (!routine) notFound();
 
-  const daysWithMachines = routine.days.map((day) => ({
-    ...day,
-    machines: getMachinesByMuscles(day.target_muscles),
-  }));
+  const daysWithMachines = await Promise.all(
+    routine.days.map(async (day) => ({
+      ...day,
+      machines: await getMachinesByMuscles(day.target_muscles),
+    }))
+  );
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
@@ -40,7 +42,7 @@ export default async function RoutineDetailPage({ params }: PageProps) {
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
-            <Button asChild variant="secondary" size="sm">
+            <Button asChild variant="secondary" size="default" className="rounded-md">
               <Link href={`/routines/${routine.id}/edit`}>Editar</Link>
             </Button>
             <DeleteButton routineId={routine.id} />
@@ -127,15 +129,17 @@ function DeleteButton({ routineId }: { routineId: number }) {
         const { redirect } = await import("next/navigation");
         const session = await getSession();
         if (!session) { redirect("/login"); }
-        else { deleteRoutine(routineId, session.userId); redirect("/routines"); }
+        else { await deleteRoutine(routineId, session.userId); redirect("/routines"); }
       }}
     >
-      <button
+      <Button
         type="submit"
-        className="inline-flex items-center justify-center rounded-xl bg-red-900/40 border border-red-800 px-3 py-1.5 text-sm font-semibold text-red-400 hover:bg-red-900/70 transition-colors"
+        className="cursor-pointer rounded-md" 
+        variant="destructive"
+
       >
         Eliminar
-      </button>
+      </Button>
     </form>
   );
 }

@@ -16,7 +16,7 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
   const { id } = await params;
   const { muscles: musclesParam } = await searchParams;
 
-  const machine = getMachineById(parseInt(id, 10));
+  const machine = await getMachineById(parseInt(id, 10));
   if (!machine) notFound();
 
   const highlightMuscles = musclesParam
