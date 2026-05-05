@@ -15,6 +15,12 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html"],
       exclude: ["node_modules", "tests", ".next", "scripts", "drizzle"],
+      thresholds: {
+        statements: 70,
+        lines: 70,
+        functions: 63,
+        branches: 58,
+      },
     },
   },
 });
