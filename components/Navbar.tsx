@@ -39,10 +39,12 @@ export default async function Navbar() {
                 <span className="hidden sm:inline">Rutinas</span>
               </Link>
             </Button>
-            <span className="hidden sm:flex items-center gap-1.5 px-2 py-1.5 text-sm text-gray-500">
-              <UserRound size={14} />
-              <span className="max-w-24 truncate">{session.username}</span>
-            </span>
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/profile" className="hidden sm:flex items-center gap-1.5 text-gray-400 hover:text-white">
+                <UserRound size={14} />
+                <span className="max-w-24 truncate">{session.username}</span>
+              </Link>
+            </Button>
             <LogoutButton />
           </>
         ) : (

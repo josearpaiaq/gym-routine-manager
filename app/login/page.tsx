@@ -13,6 +13,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") ?? "/routines";
+  const resetSuccess = searchParams.get("reset") === "ok";
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +37,11 @@ function LoginForm() {
       if (!res.ok) {
         throw new Error(data.error ?? "Error al iniciar sesión");
       }
+
+      // TODO: what if the user is already registered but not verified?
+      // TODO: handle "account not verified" case
+      // TODO: we need to send this user to the verify page if their email is not verified, instead of logging them in directly
+      // TODO: send them the otp code if they haven't already received one or if it's expired
 
       router.push(from);
       router.refresh();
@@ -71,7 +77,15 @@ function LoginForm() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password">Contraseña</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Contraseña</Label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"
@@ -81,6 +95,14 @@ function LoginForm() {
               placeholder="••••••••"
             />
           </div>
+
+          {resetSuccess && (
+            <Alert>
+              <AlertDescription className="text-green-400">
+                Contraseña restablecida con éxito. Ya puedes iniciar sesión.
+              </AlertDescription>
+            </Alert>
+          )}
 
           {error && (
             <Alert variant="destructive">

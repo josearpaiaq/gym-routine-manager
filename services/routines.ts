@@ -1,6 +1,6 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { routineDays, routines } from "@/db/schema";
+import { machines, routineDays, routineMachines, routines } from "@/db/schema";
 
 export interface RoutineWithDays {
   id: number;
@@ -137,5 +137,123 @@ export async function deleteRoutine(routineId: number, userId: number): Promise<
     .delete(routines)
     .where(and(eq(routines.id, routineId), eq(routines.userId, userId)))
     .returning({ id: routines.id });
+  return result.length > 0;
+}
+
+export interface AssignedMachine {
+  id: number;
+  machineId: number;
+  name: string;
+  sets: number | null;
+  reps: string | null;
+  weightKg: string | null;
+  restSeconds: number | null;
+  notes: string | null;
+  sortOrder: number;
+}
+
+export interface UpsertDayMachineInput {
+  sets?: number | null;
+  reps?: string | null;
+  weightKg?: string | null;
+  restSeconds?: number | null;
+  notes?: string | null;
+}
+
+async function verifyDayOwnership(dayId: number, userId: number): Promise<boolean> {
+  const [row] = await db
+    .select({ id: routineDays.id })
+    .from(routineDays)
+    .innerJoin(routines, eq(routineDays.routineId, routines.id))
+    .where(and(eq(routineDays.id, dayId), eq(routines.userId, userId)));
+  return !!row;
+}
+
+export async function getDayMachines(dayId: number, userId: number): Promise<AssignedMachine[]> {
+  const owned = await verifyDayOwnership(dayId, userId);
+  if (!owned) return [];
+
+  return db
+    .select({
+      id: routineMachines.id,
+      machineId: routineMachines.machineId,
+      name: machines.canonicalName,
+      sets: routineMachines.sets,
+      reps: routineMachines.reps,
+      weightKg: routineMachines.weightKg,
+      restSeconds: routineMachines.restSeconds,
+      notes: routineMachines.notes,
+      sortOrder: routineMachines.sortOrder,
+    })
+    .from(routineMachines)
+    .innerJoin(machines, eq(routineMachines.machineId, machines.id))
+    .where(eq(routineMachines.dayId, dayId))
+    .orderBy(asc(routineMachines.sortOrder));
+}
+
+export async function upsertDayMachine(
+  dayId: number,
+  machineId: number,
+  userId: number,
+  params: UpsertDayMachineInput
+): Promise<AssignedMachine | null> {
+  const owned = await verifyDayOwnership(dayId, userId);
+  if (!owned) return null;
+
+  const [row] = await db
+    .insert(routineMachines)
+    .values({
+      dayId,
+      machineId,
+      sets: params.sets ?? null,
+      reps: params.reps ?? null,
+      weightKg: params.weightKg ?? null,
+      restSeconds: params.restSeconds ?? null,
+      notes: params.notes ?? null,
+      sortOrder: 0,
+    })
+    .onConflictDoUpdate({
+      target: [routineMachines.dayId, routineMachines.machineId],
+      set: {
+        sets: sql`excluded.sets`,
+        reps: sql`excluded.reps`,
+        weightKg: sql`excluded.weight_kg`,
+        restSeconds: sql`excluded.rest_seconds`,
+        notes: sql`excluded.notes`,
+      },
+    })
+    .returning();
+
+  const [machine] = await db
+    .select({ name: machines.canonicalName })
+    .from(machines)
+    .where(eq(machines.id, machineId));
+
+  return {
+    id: row.id,
+    machineId: row.machineId,
+    name: machine?.name ?? "",
+    sets: row.sets,
+    reps: row.reps,
+    weightKg: row.weightKg,
+    restSeconds: row.restSeconds,
+    notes: row.notes,
+    sortOrder: row.sortOrder,
+  };
+}
+
+export async function removeDayMachine(
+  dayId: number,
+  machineId: number,
+  userId: number
+): Promise<boolean> {
+  const owned = await verifyDayOwnership(dayId, userId);
+  if (!owned) return false;
+
+  const result = await db
+    .delete(routineMachines)
+    .where(and(eq(routineMachines.dayId, dayId), eq(routineMachines.machineId, machineId)))
+    .returning({ id: routineMachines.id });
+
   return result.length > 0;
 }

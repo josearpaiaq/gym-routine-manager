@@ -5,6 +5,7 @@ import { getMachineByNormalizedName, saveMachine } from "@/services/machines";
 import { getUserById } from "@/services/users";
 import { getSession } from "@/lib/auth";
 import { uploadImageToR2 } from "@/lib/r2";
+import { normalizeName, stripFences } from "@/lib/analyze-utils";
 
 const client = new Anthropic();
 
@@ -12,6 +13,7 @@ const SYSTEM_PROMPT = `Eres un experto entrenador personal y especialista en equ
 Cuando recibas una imagen de una máquina de gym, analízala y responde ÚNICAMENTE con un objeto JSON válido (sin markdown, sin bloques de código) con esta estructura exacta:
 
 {
+  "isGymMachine": true,
   "machineName": "nombre de la máquina en español",
   "muscleGroups": ["músculo1", "músculo2", "músculo3"],
   "exercises": [
@@ -23,29 +25,16 @@ Cuando recibas una imagen de una máquina de gym, analízala y responde ÚNICAME
   ]
 }
 
-Incluye entre 3 y 4 ejercicios. Si la imagen no muestra claramente una máquina de gimnasio, usa "machineName": "No identificada" y explica en el primer ejercicio.`;
+Incluye entre 3 y 4 ejercicios.
+Si la imagen NO muestra una máquina de ejercicio de gimnasio, responde:
+{"isGymMachine": false, "machineName": "No identificada", "muscleGroups": [], "exercises": []}`;
 
 const NAME_ONLY_PROMPT = `Eres un experto en equipamiento de gimnasio.
 Observa la imagen y responde ÚNICAMENTE con un objeto JSON (sin markdown):
-{"machineName": "nombre exacto de la máquina en español"}
-Si no reconoces ninguna máquina, usa {"machineName": "No identificada"}.`;
+{"machineName": "nombre exacto de la máquina en español", "isGymMachine": true}
+Si la imagen NO muestra una máquina de ejercicio de gym, responde:
+{"machineName": "No identificada", "isGymMachine": false}`;
 
-function normalizeName(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9 ]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function stripFences(text: string): string {
-  return text
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/, "");
-}
 
 export async function POST(request: NextRequest) {
   if (process.env.MOCK_ANALYZE === "true") {
@@ -114,15 +103,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Sin respuesta del modelo" }, { status: 500 });
     }
 
-    let nameOnly: { machineName: string };
+    let nameOnly: { machineName: string; isGymMachine: boolean };
     try {
-      nameOnly = JSON.parse(stripFences(nameBlock.text)) as { machineName: string };
+      nameOnly = JSON.parse(stripFences(nameBlock.text)) as {
+        machineName: string;
+        isGymMachine: boolean;
+      };
     } catch {
       console.error("[analyze] Phase 1 parse failed:", nameBlock.text);
       return NextResponse.json(
         { error: "No se pudo procesar la respuesta del servidor" },
         { status: 500 }
       );
+    }
+
+    if (!nameOnly.isGymMachine) {
+      return NextResponse.json({ isGymMachine: false }, { status: 200 });
     }
 
     const normalizedKey = normalizeName(nameOnly.machineName);
@@ -158,6 +154,7 @@ export async function POST(request: NextRequest) {
     }
 
     let parsed: {
+      isGymMachine: boolean;
       machineName: string;
       muscleGroups: string[];
       exercises: Array<{ name: string; targetMuscles: string; execution: string[] }>;
@@ -169,6 +166,10 @@ export async function POST(request: NextRequest) {
         { error: "No se pudo procesar la respuesta del servidor" },
         { status: 500 }
       );
+    }
+
+    if (!parsed.isGymMachine) {
+      return NextResponse.json({ isGymMachine: false }, { status: 200 });
     }
 
     // Upload image to R2 and persist machine with public URL

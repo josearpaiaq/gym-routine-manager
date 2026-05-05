@@ -52,3 +52,47 @@ export async function clearSessionCookie(): Promise<void> {
   const jar = await cookies();
   jar.delete(COOKIE_NAME);
 }
+
+const RESET_COOKIE_NAME = "pw_reset_token";
+
+export async function signResetToken(email: string): Promise<string> {
+  return new SignJWT({ email, purpose: "pw-reset" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("15m")
+    .sign(secret);
+}
+
+export async function verifyResetToken(token: string): Promise<string | null> {
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    if (payload.purpose !== "pw-reset" || typeof payload.email !== "string") return null;
+    return payload.email;
+  } catch {
+    return null;
+  }
+}
+
+export async function setResetCookie(email: string): Promise<void> {
+  const token = await signResetToken(email);
+  const jar = await cookies();
+  jar.set(RESET_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 15, // 15 minutes
+  });
+}
+
+export async function clearResetCookie(): Promise<void> {
+  const jar = await cookies();
+  jar.delete(RESET_COOKIE_NAME);
+}
+
+export async function getResetEmail(): Promise<string | null> {
+  const jar = await cookies();
+  const token = jar.get(RESET_COOKIE_NAME)?.value;
+  if (!token) return null;
+  return verifyResetToken(token);
+}
