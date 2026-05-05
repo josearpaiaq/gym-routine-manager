@@ -38,6 +38,11 @@ function LoginForm() {
         throw new Error(data.error ?? "Error al iniciar sesión");
       }
 
+      // TODO: what if the user is already registered but not verified?
+      // TODO: handle "account not verified" case
+      // TODO: we need to send this user to the verify page if their email is not verified, instead of logging them in directly
+      // TODO: send them the otp code if they haven't already received one or if it's expired
+
       router.push(from);
       router.refresh();
     } catch (error) {
@@ -74,7 +79,10 @@ function LoginForm() {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Contraseña</Label>
-              <Link href="/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+              <Link
+                href="/forgot-password"
+                className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
