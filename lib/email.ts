@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendOtpEmail(email: string, code: string): Promise<void> {
   await resend.emails.send({
-    from: "Gym Manager <onboarding@gym-manager.lat/>",
+    from: "Gym Manager <onboarding@gym-manager.lat>",
     to: email,
     subject: "Tu código de verificación",
     html: `
@@ -22,7 +22,7 @@ export async function sendOtpEmail(email: string, code: string): Promise<void> {
 
 export async function sendPasswordResetEmail(email: string, code: string): Promise<void> {
   await resend.emails.send({
-    from: "Gym Manager <onboarding@gym-manager.lat/>",
+    from: "Gym Manager <onboarding@gym-manager.lat>",
     to: email,
     subject: "Restablece tu contraseña",
     html: `
