@@ -3,6 +3,9 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendOtpEmail(email: string, code: string): Promise<void> {
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`\n[OTP] ${email} → ${code}!!!\n`);
+  }
   await resend.emails.send({
     from: "Gym Manager <onboarding@gymroutinemanager.com>",
     to: email,
