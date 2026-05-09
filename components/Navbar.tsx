@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { getUserById } from "@/services/users";
-import { Dumbbell, Calendar, ScanLine, LogIn, LogOut, UserRound } from "lucide-react";
+import { Dumbbell, Calendar, ScanLine, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import NavbarClient from "@/components/NavbarClient";
 
 export default async function Navbar() {
   const session = await getSession();
@@ -39,13 +40,7 @@ export default async function Navbar() {
                 <span className="hidden sm:inline">Rutinas</span>
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/profile" className="hidden sm:flex items-center gap-1.5 text-gray-400 hover:text-white">
-                <UserRound size={14} />
-                <span className="max-w-24 truncate">{session.username}</span>
-              </Link>
-            </Button>
-            <LogoutButton />
+            <NavbarClient username={session.username} />
           </>
         ) : (
           <Button asChild size="sm" className="ml-1">
@@ -57,28 +52,5 @@ export default async function Navbar() {
         )}
       </div>
     </nav>
-  );
-}
-
-function LogoutButton() {
-  return (
-    <form
-      action={async () => {
-        "use server";
-        const { clearSessionCookie } = await import("@/lib/auth");
-        const { redirect } = await import("next/navigation");
-        await clearSessionCookie();
-        redirect("/");
-      }}
-    >
-      <Button
-        type="submit"
-        title="Cerrar sesión"
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-800 hover:text-white bg-gray-400 transition-colors text-sm font-semibold cursor-pointer"
-      >
-        <LogOut size={18} />
-        <span className="hidden sm:inline">Salir</span>
-      </Button>
-    </form>
   );
 }
