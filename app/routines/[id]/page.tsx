@@ -36,14 +36,9 @@ export default async function RoutineDetailPage({ params }: PageProps) {
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              className="text-gray-500 hover:text-gray-300 px-0 mb-1"
-            >
-              <Link href="/routines">← Mis rutinas</Link>
-            </Button>
+            <Link href="/routines" className="text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors mb-1 inline-block">
+              ← Mis rutinas
+            </Link>
             <h1 className="text-3xl font-bold">{routine.name}</h1>
             <p className="text-gray-400 text-sm mt-1">
               {routine.days.length} día{routine.days.length !== 1 ? "s" : ""}
