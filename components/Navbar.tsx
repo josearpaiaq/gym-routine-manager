@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { getUserById } from "@/services/users";
-import { Dumbbell, Calendar, ScanLine, LogIn, LogOut, UserRound } from "lucide-react";
+import { Dumbbell, Calendar, ScanLine, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import NavbarClient from "@/components/NavbarClient";
+import NavLink from "@/components/NavLink";
 
 export default async function Navbar() {
   const session = await getSession();
@@ -15,37 +17,25 @@ export default async function Navbar() {
       </Link>
 
       <div className="flex items-center gap-1">
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/machines" className="flex items-center gap-1.5">
-            <Dumbbell size={18} />
-            <span className="hidden sm:inline">Máquinas</span>
-          </Link>
-        </Button>
+        <NavLink href="/machines">
+          <Dumbbell size={18} />
+          <span className="hidden sm:inline">Máquinas</span>
+        </NavLink>
 
         {user?.analyzerEnabled && (
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/analyze" className="flex items-center gap-1.5">
-              <ScanLine size={18} />
-              <span className="hidden sm:inline">Analizar</span>
-            </Link>
-          </Button>
+          <NavLink href="/analyze">
+            <ScanLine size={18} />
+            <span className="hidden sm:inline">Analizar</span>
+          </NavLink>
         )}
 
         {session ? (
           <>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/routines" className="flex items-center gap-1.5">
-                <Calendar size={18} />
-                <span className="hidden sm:inline">Rutinas</span>
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/profile" className="hidden sm:flex items-center gap-1.5 text-gray-400 hover:text-white">
-                <UserRound size={14} />
-                <span className="max-w-24 truncate">{session.username}</span>
-              </Link>
-            </Button>
-            <LogoutButton />
+            <NavLink href="/routines">
+              <Calendar size={18} />
+              <span className="hidden sm:inline">Rutinas</span>
+            </NavLink>
+            <NavbarClient username={session.username} />
           </>
         ) : (
           <Button asChild size="sm" className="ml-1">
@@ -57,28 +47,5 @@ export default async function Navbar() {
         )}
       </div>
     </nav>
-  );
-}
-
-function LogoutButton() {
-  return (
-    <form
-      action={async () => {
-        "use server";
-        const { clearSessionCookie } = await import("@/lib/auth");
-        const { redirect } = await import("next/navigation");
-        await clearSessionCookie();
-        redirect("/");
-      }}
-    >
-      <Button
-        type="submit"
-        title="Cerrar sesión"
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-800 hover:text-white bg-gray-400 transition-colors text-sm font-semibold cursor-pointer"
-      >
-        <LogOut size={18} />
-        <span className="hidden sm:inline">Salir</span>
-      </Button>
-    </form>
   );
 }

@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getUserById } from "@/services/users";
-import Navbar from "@/components/Navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import AnalyzeForm from "./AnalyzeForm";
 
@@ -13,21 +12,18 @@ export default async function AnalyzePage() {
 
   if (!user || !user.analyzerEnabled) {
     return (
-      <main className="min-h-screen bg-gray-950 text-white">
-        <Navbar />
-        <div className="mx-auto max-w-lg px-4 py-20 text-center">
-          <Card>
-            <CardContent className="pt-10 pb-10 space-y-3">
-              <span className="text-5xl block">🔒</span>
-              <h1 className="text-2xl font-bold">Función no disponible</h1>
-              <p className="text-gray-400 text-sm">
-                El análisis de máquinas con IA está disponible próximamente para tu cuenta.
-              </p>
-              <p className="text-gray-500 text-xs">Próximamente</p>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+      <div className="mx-auto max-w-lg px-4 py-20 text-center">
+        <Card>
+          <CardContent className="pt-10 pb-10 space-y-3">
+            <span className="text-5xl block">🔒</span>
+            <h1 className="text-2xl font-bold">Función no disponible</h1>
+            <p className="text-gray-400 text-sm">
+              El análisis de máquinas con IA está disponible próximamente para tu cuenta.
+            </p>
+            <p className="text-gray-500 text-xs">Próximamente</p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
