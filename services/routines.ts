@@ -25,7 +25,7 @@ export async function listRoutinesByUser(userId: number): Promise<RoutineWithDay
     .select()
     .from(routines)
     .where(eq(routines.userId, userId))
-    .orderBy(desc(routines.createdAt));
+    .orderBy(desc(routines.isActive), desc(routines.createdAt));
 
   return Promise.all(
     rs.map(async (r) => {

@@ -105,7 +105,7 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
-      <div className="mx-auto max-w-2xl px-6 py-10">
+      <div className="mx-auto max-w-2xl px-6 pt-10">
         <div className="mb-6">
           <Link href={`/routines/${routine.id}`} className="text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors">
             ← Volver
@@ -114,7 +114,8 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
 
         <h1 className="text-3xl font-bold mb-8">Editar rutina</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-6 pb-24">
           <div className="space-y-1.5">
             <Label>Nombre de la rutina</Label>
             <Input required value={name} onChange={(e) => setName(e.target.value)} />
@@ -200,18 +201,20 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
               })}
           </div>
 
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          <Button type="submit" disabled={loading} className="w-full" size="lg">
-            {loading && (
-              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          </div>
+          <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-6 bg-gray-950 border-t border-gray-800/60">
+            {error && (
+              <Alert variant="destructive" className="mb-3">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
-            Guardar cambios
-          </Button>
+            <Button type="submit" disabled={loading} className="w-full" size="lg">
+              {loading && (
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              )}
+              Guardar cambios
+            </Button>
+          </div>
         </form>
       </div>
     </main>
