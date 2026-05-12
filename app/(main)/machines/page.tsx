@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { listMachinesPaged } from "@/services/machines";
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,8 +16,6 @@ export default async function MachinesPage({ searchParams }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
-      <Navbar />
-
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
         <div className="mb-8 flex items-center justify-between">
           <div>

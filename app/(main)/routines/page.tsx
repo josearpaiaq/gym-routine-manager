@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { listRoutinesByUser } from "@/services/routines";
 import { WEEKDAY_LABELS } from "@/constants/weekdays";
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,8 +15,6 @@ export default async function RoutinesPage() {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
-      <Navbar />
-
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
         <div className="mb-8 flex items-center justify-between">
           <div>

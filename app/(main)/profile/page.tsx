@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getUserById } from "@/services/users";
-import Navbar from "@/components/Navbar";
 import { Card } from "@/components/ui/card";
 import ChangePasswordForm from "./ChangePasswordForm";
 import DeleteAccountSection from "./DeleteAccountSection";
@@ -21,8 +20,6 @@ export default async function ProfilePage() {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
-      <Navbar />
-
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10 space-y-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">Mi perfil</h1>
