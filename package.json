@@ -38,6 +38,10 @@
     "ws": "^8.20.0",
     "zod": "^4.4.1"
   },
+  "packageManager": "pnpm@11.1.1",
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp", "unrs-resolver"]
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
