@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getWorkoutStats, getTodayLog } from "@/services/workoutLogs";
-import { listRoutinesByUser } from "@/services/routines";
+import { listRoutinesByUser, getActiveRoutine } from "@/services/routines";
 import { WEEKDAY_LABELS } from "@/constants/weekdays";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,10 @@ export default async function DashboardPage() {
   const session = await getSession();
   if (!session) redirect("/login?from=/dashboard");
 
-  const [stats, todayLog, routines] = await Promise.all([
+  const [stats, todayLog, activeRoutine, routines] = await Promise.all([
     getWorkoutStats(session.userId),
     getTodayLog(session.userId),
+    getActiveRoutine(session.userId),
     listRoutinesByUser(session.userId),
   ]);
 
@@ -25,11 +26,11 @@ export default async function DashboardPage() {
   const jsDay = new Date().getDay();
   const todayDayNum = jsDay === 0 ? 7 : jsDay;
 
-  const todayDays = routines.flatMap((r) =>
-    r.days
-      .filter((d) => d.day_number === todayDayNum)
-      .map((d) => ({ ...d, routineName: r.name, routineId: r.id }))
-  );
+  const todayDays = activeRoutine
+    ? activeRoutine.days
+        .filter((d) => d.day_number === todayDayNum)
+        .map((d) => ({ ...d, routineName: activeRoutine.name, routineId: activeRoutine.id }))
+    : [];
 
   const today = new Date();
 
@@ -150,15 +151,22 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <Card className="p-5">
-              <p className="text-sm text-gray-500">No tienes rutina programada para hoy.</p>
-              {routines.length === 0 ? (
-                <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
-                  <Link href="/routines/new">Crear tu primera rutina →</Link>
-                </Button>
+              {!activeRoutine ? (
+                <>
+                  <p className="text-sm text-gray-500">No tienes ninguna rutina activa.</p>
+                  <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
+                    <Link href="/routines">
+                      {routines.length === 0 ? "Crear tu primera rutina →" : "Activar una rutina →"}
+                    </Link>
+                  </Button>
+                </>
               ) : (
-                <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
-                  <Link href="/routines">Ver mis rutinas →</Link>
-                </Button>
+                <>
+                  <p className="text-sm text-gray-500">No tienes rutina programada para hoy.</p>
+                  <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
+                    <Link href={`/routines/${activeRoutine.id}`}>Ver rutina activa →</Link>
+                  </Button>
+                </>
               )}
             </Card>
           )}
@@ -181,12 +189,19 @@ export default async function DashboardPage() {
             <div className="space-y-2">
               {routines.slice(0, 3).map((r) => (
                 <Link key={r.id} href={`/routines/${r.id}`} className="group block">
-                  <Card className="px-4 py-3 hover:border-indigo-700 transition-colors">
+                  <Card className={`px-4 py-3 hover:border-indigo-700 transition-colors ${r.is_active ? "border-indigo-700 bg-indigo-950/10" : ""}`}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium group-hover:text-indigo-300 transition-colors">
-                          {r.name}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium group-hover:text-indigo-300 transition-colors">
+                            {r.name}
+                          </p>
+                          {r.is_active && (
+                            <Badge className="text-xs bg-indigo-600 text-white border-0">
+                              Activa
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-xs text-gray-500 mt-0.5">
                           {r.days.length} día{r.days.length !== 1 ? "s" : ""}
                         </p>

@@ -5,6 +5,7 @@ import { machines, routineDays, routineMachines, routines } from "@/db/schema";
 export interface RoutineWithDays {
   id: number;
   name: string;
+  is_active: boolean;
   created_at: string;
   days: Array<{
     id: number;
@@ -36,6 +37,7 @@ export async function listRoutinesByUser(userId: number): Promise<RoutineWithDay
       return {
         id: r.id,
         name: r.name,
+        is_active: r.isActive,
         created_at: r.createdAt.toISOString(),
         days: days.map((d) => ({
           id: d.id,
@@ -67,6 +69,7 @@ export async function getRoutineByIdForUser(
   return {
     id: routine.id,
     name: routine.name,
+    is_active: routine.isActive,
     created_at: routine.createdAt.toISOString(),
     days: days.map((d) => ({
       id: d.id,
@@ -83,9 +86,14 @@ export async function createRoutine(
 ): Promise<RoutineWithDays> {
   let routineId = 0;
   await db.transaction(async (tx) => {
+    const [existing] = await tx
+      .select({ id: routines.id })
+      .from(routines)
+      .where(and(eq(routines.userId, userId), eq(routines.isActive, true)));
+
     const [r] = await tx
       .insert(routines)
-      .values({ userId, name: input.name })
+      .values({ userId, name: input.name, isActive: !existing })
       .returning({ id: routines.id });
     routineId = r.id;
     if (input.days.length > 0) {
@@ -138,6 +146,47 @@ export async function deleteRoutine(routineId: number, userId: number): Promise<
     .where(and(eq(routines.id, routineId), eq(routines.userId, userId)))
     .returning({ id: routines.id });
   return result.length > 0;
+}
+
+export async function setActiveRoutine(routineId: number, userId: number): Promise<boolean> {
+  const [existing] = await db
+    .select({ id: routines.id })
+    .from(routines)
+    .where(and(eq(routines.id, routineId), eq(routines.userId, userId)));
+  if (!existing) return false;
+
+  await db.transaction(async (tx) => {
+    await tx.update(routines).set({ isActive: false }).where(eq(routines.userId, userId));
+    await tx.update(routines).set({ isActive: true }).where(eq(routines.id, routineId));
+  });
+  return true;
+}
+
+export async function getActiveRoutine(userId: number): Promise<RoutineWithDays | null> {
+  const [routine] = await db
+    .select()
+    .from(routines)
+    .where(and(eq(routines.userId, userId), eq(routines.isActive, true)));
+  if (!routine) return null;
+
+  const days = await db
+    .select()
+    .from(routineDays)
+    .where(eq(routineDays.routineId, routine.id))
+    .orderBy(asc(routineDays.dayNumber));
+
+  return {
+    id: routine.id,
+    name: routine.name,
+    is_active: true,
+    created_at: routine.createdAt.toISOString(),
+    days: days.map((d) => ({
+      id: d.id,
+      day_number: d.dayNumber,
+      name: d.name,
+      target_muscles: d.targetMuscles,
+    })),
+  };
 }
 
 export interface AssignedMachine {
