@@ -46,17 +46,23 @@ vi.mock("@/db", () => {
 import {
   listRoutinesByUser,
   getRoutineByIdForUser,
+  createRoutine,
   deleteRoutine,
   getDayMachines,
   removeDayMachine,
+  setActiveRoutine,
+  getActiveRoutine,
 } from "@/services/routines";
 
 const routineRow = {
   id: 1,
   userId: 42,
   name: "Rutina de fuerza",
+  isActive: false,
   createdAt: new Date("2024-01-15"),
 };
+
+const activeRoutineRow = { ...routineRow, isActive: true };
 
 const dayRow = {
   id: 10,
@@ -157,5 +163,77 @@ describe("removeDayMachine", () => {
     dbCtrl.enqueue([{ id: 10 }]); // verifyDayOwnership passes
     dbCtrl.enqueue([{ id: 5 }]);  // DELETE returns deleted row
     expect(await removeDayMachine(10, 1, 42)).toBe(true);
+  });
+});
+
+describe("createRoutine", () => {
+  const input = {
+    name: "Nueva rutina",
+    days: [{ day_number: 1, name: "Lunes", target_muscles: ["Pecho"] }],
+  };
+
+  it("auto-activates when no active routine exists", async () => {
+    dbCtrl.enqueue([]);             // tx.select: no active routine
+    dbCtrl.enqueue([{ id: 1 }]);   // tx.insert routine → returning id
+    dbCtrl.enqueue([]);             // tx.insert days
+    dbCtrl.enqueue([activeRoutineRow]); // getRoutineByIdForUser → routine
+    dbCtrl.enqueue([dayRow]);           // getRoutineByIdForUser → days
+    const result = await createRoutine(42, input);
+    expect(result.id).toBe(1);
+    expect(result.is_active).toBe(true);
+  });
+
+  it("does not activate when an active routine already exists", async () => {
+    dbCtrl.enqueue([{ id: 99 }]);  // tx.select: active routine found
+    dbCtrl.enqueue([{ id: 1 }]);   // tx.insert routine → returning id
+    dbCtrl.enqueue([]);             // tx.insert days
+    dbCtrl.enqueue([routineRow]);   // getRoutineByIdForUser → routine (isActive: false)
+    dbCtrl.enqueue([dayRow]);       // getRoutineByIdForUser → days
+    const result = await createRoutine(42, input);
+    expect(result.id).toBe(1);
+    expect(result.is_active).toBe(false);
+  });
+
+  it("creates routine without days", async () => {
+    dbCtrl.enqueue([]);           // tx.select: no active routine
+    dbCtrl.enqueue([{ id: 2 }]); // tx.insert routine → returning id
+    // no days insert
+    dbCtrl.enqueue([{ ...routineRow, id: 2, isActive: true }]); // getRoutineByIdForUser
+    dbCtrl.enqueue([]); // no days
+    const result = await createRoutine(42, { name: "Sin días", days: [] });
+    expect(result.id).toBe(2);
+  });
+});
+
+describe("setActiveRoutine", () => {
+  it("returns false when routine doesn't belong to user", async () => {
+    dbCtrl.enqueue([]); // SELECT ownership check fails
+    expect(await setActiveRoutine(1, 99)).toBe(false);
+  });
+
+  it("returns true and runs two updates inside a transaction", async () => {
+    dbCtrl.enqueue([{ id: 1 }]); // SELECT ownership check passes
+    // transaction: tx.update (deactivate all) + tx.update (activate target)
+    dbCtrl.enqueue([]);           // tx.update: set all isActive = false
+    dbCtrl.enqueue([]);           // tx.update: set target isActive = true
+    expect(await setActiveRoutine(1, 42)).toBe(true);
+  });
+});
+
+describe("getActiveRoutine", () => {
+  it("returns null when user has no active routine", async () => {
+    dbCtrl.enqueue([]); // SELECT where isActive = true → nothing
+    expect(await getActiveRoutine(99)).toBeNull();
+  });
+
+  it("returns the active routine with its days", async () => {
+    dbCtrl.enqueue([activeRoutineRow]); // SELECT active routine
+    dbCtrl.enqueue([dayRow]);           // SELECT days
+    const result = await getActiveRoutine(42);
+    expect(result).not.toBeNull();
+    expect(result!.id).toBe(1);
+    expect(result!.is_active).toBe(true);
+    expect(result!.days).toHaveLength(1);
+    expect(result!.days[0].name).toBe("Día de pecho");
   });
 });
