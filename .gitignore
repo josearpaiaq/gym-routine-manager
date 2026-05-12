@@ -47,3 +47,5 @@ next-env.d.ts
 /db/*.db
 /db/*.db-shm
 /db/*.db-wal
+
+video-promo/
