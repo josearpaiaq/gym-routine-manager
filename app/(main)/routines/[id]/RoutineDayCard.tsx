@@ -31,7 +31,12 @@ interface Props {
   routineId: number;
 }
 
-export default function RoutineDayCard({ day, initialAssigned, availableMachines, routineId }: Props) {
+export default function RoutineDayCard({
+  day,
+  initialAssigned,
+  availableMachines,
+  routineId,
+}: Props) {
   const [assigned, setAssigned] = useState<AssignedMachine[]>(initialAssigned);
   const [adding, setAdding] = useState(false);
   const [addingId, setAddingId] = useState<number | null>(null);
@@ -107,15 +112,13 @@ export default function RoutineDayCard({ day, initialAssigned, availableMachines
 
         {unassigned.length > 0 && (
           <div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs text-gray-400 hover:text-gray-200 px-0 gap-1.5"
+            <span
+              className="flex gap-1 items-center text-sm font-semibold text-gray-500 hover:text-gray-300 hover:bg-none transition-colors hover:cursor-pointer"
               onClick={() => setAdding((v) => !v)}
             >
               {adding ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               {adding ? "Cerrar" : "Agregar máquina"}
-            </Button>
+            </span>
 
             {adding && (
               <div className="mt-2 space-y-1.5">
@@ -132,7 +135,10 @@ export default function RoutineDayCard({ day, initialAssigned, availableMachines
                             day.target_muscles.map((t) => t.toLowerCase()).includes(g.toLowerCase())
                           )
                           .map((g) => (
-                            <Badge key={g} className="bg-indigo-900/40 border-indigo-800 text-indigo-400 text-xs">
+                            <Badge
+                              key={g}
+                              className="bg-indigo-900/40 border-indigo-800 text-indigo-400 text-xs"
+                            >
                               {g}
                             </Badge>
                           ))}

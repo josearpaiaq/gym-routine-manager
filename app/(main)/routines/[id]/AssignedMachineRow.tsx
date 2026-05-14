@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { AssignedMachine } from "@/services/routines";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface Props {
   machine: AssignedMachine;
@@ -24,7 +25,13 @@ function formatSummary(m: AssignedMachine): string {
   return parts.join(" · ");
 }
 
-export default function AssignedMachineRow({ machine, routineId, dayId, onUpdate, onRemove }: Props) {
+export default function AssignedMachineRow({
+  machine,
+  routineId,
+  dayId,
+  onUpdate,
+  onRemove,
+}: Props) {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
@@ -35,6 +42,8 @@ export default function AssignedMachineRow({ machine, routineId, dayId, onUpdate
     restSeconds: machine.restSeconds?.toString() ?? "",
     notes: machine.notes ?? "",
   });
+
+  const { confirm, ConfirmModal } = useConfirm();
 
   function setField(key: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -63,113 +72,135 @@ export default function AssignedMachineRow({ machine, routineId, dayId, onUpdate
   }
 
   async function handleRemove() {
-    setRemoving(true);
-    const res = await fetch(`/api/routines/${routineId}/days/${dayId}/machines`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ machineId: machine.machineId }),
-    });
-    setRemoving(false);
-    if (res.ok) onRemove(machine.machineId);
+    try {
+      setRemoving(true);
+      const [confirmed] = await confirm({
+        title: "Eliminar ejercicio",
+        message: "¿Estás seguro de que quieres eliminar este ejercicio?",
+        confirmLabel: "Eliminar",
+      });
+      if (!confirmed) return;
+      const res = await fetch(`/api/routines/${routineId}/days/${dayId}/machines`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ machineId: machine.machineId }),
+      });
+      setRemoving(false);
+      if (res.ok) onRemove(machine.machineId);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setRemoving(false);
+    }
   }
 
   const summary = formatSummary(machine);
 
   return (
-    <div className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-3">
-      {!editing ? (
-        <div className="flex items-center justify-between gap-3">
-          <div>
+    <>
+      {ConfirmModal}
+      <div className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-3">
+        {!editing ? (
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-white">{machine.name}</p>
+              {summary && <p className="text-xs text-gray-400 mt-0.5">{summary}</p>}
+              {machine.notes && (
+                <p className="text-xs text-gray-500 mt-0.5 italic">{machine.notes}</p>
+              )}
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-xs h-7 px-2"
+                onClick={() => setEditing(true)}
+              >
+                Editar
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-xs h-7 px-2 text-red-400 hover:text-red-300 hover:bg-red-950"
+                onClick={handleRemove}
+                disabled={removing}
+              >
+                {removing ? "..." : "Eliminar"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
             <p className="text-sm font-medium text-white">{machine.name}</p>
-            {summary && <p className="text-xs text-gray-400 mt-0.5">{summary}</p>}
-            {machine.notes && <p className="text-xs text-gray-500 mt-0.5 italic">{machine.notes}</p>}
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button size="sm" variant="ghost" className="text-xs h-7 px-2" onClick={() => setEditing(true)}>
-              Editar
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-xs h-7 px-2 text-red-400 hover:text-red-300 hover:bg-red-950"
-              onClick={handleRemove}
-              disabled={removing}
-            >
-              {removing ? "..." : "Eliminar"}
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <p className="text-sm font-medium text-white">{machine.name}</p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="space-y-1">
-              <Label className="text-xs">Series</Label>
-              <Input
-                type="number"
-                min={1}
-                max={100}
-                value={form.sets}
-                onChange={(e) => setField("sets", e.target.value)}
-                placeholder="3"
-                className="h-8 text-sm"
-              />
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="space-y-1">
+                <Label className="text-xs">Series</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={form.sets}
+                  onChange={(e) => setField("sets", e.target.value)}
+                  placeholder="3"
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Reps</Label>
+                <Input
+                  type="text"
+                  value={form.reps}
+                  onChange={(e) => setField("reps", e.target.value)}
+                  placeholder="8-12"
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Peso (kg)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  value={form.weightKg}
+                  onChange={(e) => setField("weightKg", e.target.value)}
+                  placeholder="60"
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Descanso (s)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={3600}
+                  value={form.restSeconds}
+                  onChange={(e) => setField("restSeconds", e.target.value)}
+                  placeholder="90"
+                  className="h-8 text-sm"
+                />
+              </div>
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Reps</Label>
+              <Label className="text-xs">Notas</Label>
               <Input
                 type="text"
-                value={form.reps}
-                onChange={(e) => setField("reps", e.target.value)}
-                placeholder="8-12"
+                value={form.notes}
+                onChange={(e) => setField("notes", e.target.value)}
+                placeholder="Indicaciones adicionales..."
                 className="h-8 text-sm"
               />
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Peso (kg)</Label>
-              <Input
-                type="number"
-                min={0}
-                step={0.5}
-                value={form.weightKg}
-                onChange={(e) => setField("weightKg", e.target.value)}
-                placeholder="60"
-                className="h-8 text-sm"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Descanso (s)</Label>
-              <Input
-                type="number"
-                min={0}
-                max={3600}
-                value={form.restSeconds}
-                onChange={(e) => setField("restSeconds", e.target.value)}
-                placeholder="90"
-                className="h-8 text-sm"
-              />
+            <div className="flex gap-2">
+              <Button size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? "Guardando..." : "Guardar"}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
+                Cancelar
+              </Button>
             </div>
           </div>
-          <div className="space-y-1">
-            <Label className="text-xs">Notas</Label>
-            <Input
-              type="text"
-              value={form.notes}
-              onChange={(e) => setField("notes", e.target.value)}
-              placeholder="Indicaciones adicionales..."
-              className="h-8 text-sm"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button size="sm" onClick={handleSave} disabled={saving}>
-              {saving ? "Guardando..." : "Guardar"}
-            </Button>
-            <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
-              Cancelar
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
