@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ImageOff } from "lucide-react";
 import { listMachinesPaged } from "@/services/machines";
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,8 +17,6 @@ export default async function MachinesPage({ searchParams }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
-      <Navbar />
-
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -42,7 +40,7 @@ export default async function MachinesPage({ searchParams }: PageProps) {
             {machines.map((machine) => (
               <Link key={machine.id} href={`/machines/${machine.id}`} className="group block">
                 <Card className="flex items-center gap-4 px-5 py-4 hover:border-indigo-700 transition-colors">
-                  {machine.image_path ? (
+                  {machine.is_gym_machine && machine.image_path ? (
                     <div className="relative h-14 w-14 shrink-0 rounded-xl overflow-hidden">
                       <Image
                         src={machine.image_path}
@@ -52,14 +50,21 @@ export default async function MachinesPage({ searchParams }: PageProps) {
                       />
                     </div>
                   ) : (
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gray-800 text-2xl">
-                      🏋️
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-amber-900/30">
+                      <ImageOff size={22} className="text-amber-400" />
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <h2 className="font-semibold text-white group-hover:text-indigo-300 transition-colors truncate">
-                      {machine.canonical_name}
-                    </h2>
+                    <div className="flex items-center gap-2">
+                      <h2 className={`font-semibold truncate transition-colors ${machine.is_gym_machine ? "text-white group-hover:text-indigo-300" : "text-amber-300"}`}>
+                        {machine.canonical_name}
+                      </h2>
+                      {!machine.is_gym_machine && (
+                        <span className="shrink-0 text-xs font-medium text-amber-500">
+                          No identificada
+                        </span>
+                      )}
+                    </div>
                     {machine.muscle_groups.length > 0 && (
                       <div className="mt-1.5 flex flex-wrap gap-1.5">
                         {machine.muscle_groups.map((m) => (

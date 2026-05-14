@@ -19,7 +19,7 @@ Object.defineProperty(URL, "createObjectURL", {
   value: vi.fn(() => "blob:test-url"),
 });
 
-import AnalyzeForm from "@/app/analyze/AnalyzeForm";
+import AnalyzeForm from "@/app/(main)/analyze/AnalyzeForm";
 
 function makeImageFile(name = "machine.jpg"): File {
   return new File(["fake-image-data"], name, { type: "image/jpeg" });

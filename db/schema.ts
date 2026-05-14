@@ -46,6 +46,7 @@ export const routines = pgTable("routines", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
+  isActive: boolean("is_active").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -80,6 +81,17 @@ export const routineMachines = pgTable(
   (t) => [unique().on(t.dayId, t.machineId)]
 );
 
+export const workoutLogs = pgTable("workout_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  routineId: integer("routine_id").references(() => routines.id, { onDelete: "set null" }),
+  dayId: integer("day_id").references(() => routineDays.id, { onDelete: "set null" }),
+  completedAt: timestamp("completed_at").notNull().defaultNow(),
+  note: text("note"),
+});
+
 export type User = typeof users.$inferSelect;
 export type OtpCode = typeof otpCodes.$inferSelect;
 export type Machine = typeof machines.$inferSelect;
@@ -87,3 +99,4 @@ export type Exercise = typeof exercises.$inferSelect;
 export type Routine = typeof routines.$inferSelect;
 export type RoutineDay = typeof routineDays.$inferSelect;
 export type RoutineMachine = typeof routineMachines.$inferSelect;
+export type WorkoutLog = typeof workoutLogs.$inferSelect;

@@ -3,7 +3,6 @@ import { redirect, notFound } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getRoutineByIdForUser, getDayMachines } from "@/services/routines";
 import { getMachinesByMuscles } from "@/services/machines";
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import DeleteButton from "./DeleteButton";
 import RoutineDayCard from "./RoutineDayCard";
@@ -31,8 +30,6 @@ export default async function RoutineDetailPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
-      <Navbar />
-
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>

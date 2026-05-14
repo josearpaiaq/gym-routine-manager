@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMachineById } from "@/services/machines";
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,21 +27,16 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
-      <Navbar />
-
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10">
         <div className="mb-6">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="text-gray-500 hover:text-gray-300 px-0"
+          <Link
+            href="/machines"
+            className="text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors mb-1 inline-block"
           >
-            <Link href="/machines">← Máquinas</Link>
-          </Button>
+            ← Máquinas
+          </Link>
         </div>
 
-        {/* Machine header */}
         <Card className="overflow-hidden mb-6">
           {machine.image_path && (
             <div className="w-full h-52 relative">
@@ -66,7 +60,6 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
           </CardContent>
         </Card>
 
-        {/* Exercises */}
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold px-1">
             Ejercicios ({machine.exercises.length})

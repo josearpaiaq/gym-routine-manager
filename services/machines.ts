@@ -30,6 +30,7 @@ export interface MachinePage {
     canonical_name: string;
     muscle_groups: string[];
     image_path: string | null;
+    is_gym_machine: boolean;
   }>;
   total: number;
   page: number;
@@ -153,6 +154,7 @@ export async function listMachinesPaged(page: number, perPage = 10): Promise<Mac
       canonical_name: m.canonicalName,
       muscle_groups: m.muscleGroups,
       image_path: m.imagePath ?? null,
+      is_gym_machine: m.isGymMachine,
     })),
     total,
     page,

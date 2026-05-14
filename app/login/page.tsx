@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const from = searchParams.get("from") ?? "/routines";
+  const from = searchParams.get("from") ?? "/dashboard";
   const resetSuccess = searchParams.get("reset") === "ok";
 
   const [identifier, setIdentifier] = useState("");
