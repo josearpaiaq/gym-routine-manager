@@ -97,7 +97,6 @@ export default function AnalyzeForm() {
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          capture="environment"
           className="sr-only"
           onChange={handleFileChange}
         />
