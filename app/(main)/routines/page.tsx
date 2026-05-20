@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { CalendarDays, ChevronRight } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { listRoutinesByUser } from "@/services/routines";
 import { WEEKDAY_LABELS } from "@/constants/weekdays";
@@ -29,10 +30,15 @@ export default async function RoutinesPage() {
 
         {routines.length === 0 ? (
           <Card className="p-12 text-center">
-            <p className="text-2xl mb-2">📅</p>
+            <div className="flex justify-center mb-3">
+              <CalendarDays size={32} className="text-gray-600" />
+            </div>
             <p className="text-gray-400">Aún no tienes rutinas.</p>
             <Button asChild variant="link" className="mt-4 text-sm">
-              <Link href="/routines/new">Crear tu primera rutina →</Link>
+              <Link href="/routines/new" className="inline-flex items-center gap-1">
+                Crear tu primera rutina
+                <ChevronRight size={14} />
+              </Link>
             </Button>
           </Card>
         ) : (
@@ -83,7 +89,7 @@ export default async function RoutinesPage() {
                       href={`/routines/${routine.id}`}
                       className="text-gray-600 hover:text-indigo-400 transition-colors"
                     >
-                      →
+                      <ChevronRight size={18} />
                     </Link>
                   </div>
                 </div>

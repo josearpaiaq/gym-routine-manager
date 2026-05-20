@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, Plus } from "lucide-react";
 import { WEEKDAY_LABELS } from "@/constants/weekdays";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -165,7 +165,10 @@ export default function RoutineDayCard({
           <p className="text-sm text-gray-600">
             No hay máquinas registradas para estos músculos.{" "}
             <Button asChild variant="link" className="text-sm p-0 h-auto">
-              <Link href="/analyze">Analizar una →</Link>
+              <Link href="/analyze" className="inline-flex items-center gap-1">
+                Analizar una
+                <ChevronRight size={13} />
+              </Link>
             </Button>
           </p>
         )}

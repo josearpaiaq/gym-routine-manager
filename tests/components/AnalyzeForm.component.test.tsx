@@ -36,7 +36,7 @@ afterEach(() => {
 describe("AnalyzeForm", () => {
   it("renders the upload zone initially", () => {
     render(<AnalyzeForm />);
-    expect(screen.getByText(/toca para subir/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /toca para subir/i })).toBeInTheDocument();
   });
 
   it("shows analyze button after image is selected", async () => {
@@ -109,7 +109,7 @@ describe("AnalyzeForm", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /limpiar/i }));
     await waitFor(() => {
-      expect(screen.getByText(/toca para subir/i)).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /toca para subir/i })).toBeInTheDocument();
     });
   });
 });
