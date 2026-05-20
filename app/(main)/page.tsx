@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Bot, CalendarDays, ChevronRight, Dumbbell, Flame } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
@@ -78,17 +79,17 @@ export default async function LandingPage() {
         </p>
         <div className="grid sm:grid-cols-3 gap-5">
           <FeatureCard
-            icon="🤖"
+            icon={<Bot size={28} className="text-indigo-400" />}
             title="Análisis con IA"
             description="Identifica cualquier máquina al instante y obtén ejercicios recomendados con la técnica correcta."
           />
           <FeatureCard
-            icon="🏋️"
+            icon={<Dumbbell size={28} className="text-indigo-400" />}
             title="Catálogo personal"
             description="Todas las máquinas que has analizado quedan guardadas con sus ejercicios listos para usar."
           />
           <FeatureCard
-            icon="🔥"
+            icon={<Flame size={28} className="text-indigo-400" />}
             title="Racha y progreso"
             description="Visualiza cuántos días llevas entrenando, tu racha activa y las semanas que has sido constante."
           />
@@ -143,13 +144,13 @@ function FeatureCard({
   title,
   description,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   description: string;
 }) {
   return (
     <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-6 space-y-3">
-      <span className="text-3xl">{icon}</span>
+      <div>{icon}</div>
       <h3 className="font-semibold text-white">{title}</h3>
       <p className="text-sm text-gray-400">{description}</p>
     </div>

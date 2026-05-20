@@ -1,5 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  Dumbbell,
+  Flame,
+  Moon,
+} from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { getWorkoutStats, getTodayLog } from "@/services/workoutLogs";
 import { listRoutinesByUser, getActiveRoutine } from "@/services/routines";
@@ -56,18 +65,24 @@ export default async function DashboardPage() {
           <StatCard
             label="Racha"
             value={`${stats.streak}d`}
-            icon={stats.streak >= 3 ? "🔥" : "💤"}
+            icon={
+              stats.streak >= 3 ? (
+                <Flame size={22} className="text-orange-400" />
+              ) : (
+                <Moon size={22} className="text-gray-500" />
+              )
+            }
             highlight={stats.streak >= 3}
           />
           <StatCard
             label="Entrenos"
             value={String(stats.totalWorkouts)}
-            icon="💪"
+            icon={<Dumbbell size={22} className="text-indigo-400" />}
           />
           <StatCard
             label="Semanas"
             value={String(stats.activeWeeks)}
-            icon="📅"
+            icon={<CalendarDays size={22} className="text-indigo-400" />}
           />
         </div>
 
@@ -84,7 +99,7 @@ export default async function DashboardPage() {
               return (
                 <div key={i} className="flex flex-col items-center gap-1.5 flex-1">
                   <div
-                    className={`h-9 w-9 rounded-full flex items-center justify-center text-sm font-medium ring-1 ${
+                    className={`h-9 w-9 rounded-full flex items-center justify-center ring-1 ${
                       active
                         ? "bg-indigo-600 text-white ring-indigo-500"
                         : isToday
@@ -92,7 +107,7 @@ export default async function DashboardPage() {
                           : "bg-gray-800/50 text-gray-700 ring-transparent"
                     }`}
                   >
-                    {active ? "✓" : ""}
+                    {active && <Check size={14} strokeWidth={3} />}
                   </div>
                   <span className={`text-xs ${isToday ? "text-indigo-400 font-medium" : "text-gray-600"}`}>
                     {SHORT_DAYS[d.getDay()]}
@@ -112,7 +127,7 @@ export default async function DashboardPage() {
           {todayLog ? (
             <Card className="p-5 border-indigo-800/50 bg-indigo-950/20">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">✅</span>
+                <CheckCircle2 size={28} className="text-indigo-400 shrink-0" />
                 <div>
                   <p className="font-medium">Entrenamiento completado</p>
                   <p className="text-sm text-gray-400">¡Excelente trabajo hoy!</p>
@@ -155,8 +170,9 @@ export default async function DashboardPage() {
                 <>
                   <p className="text-sm text-gray-500">No tienes ninguna rutina activa.</p>
                   <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
-                    <Link href="/routines">
-                      {routines.length === 0 ? "Crear tu primera rutina →" : "Activar una rutina →"}
+                    <Link href="/routines" className="inline-flex items-center gap-1">
+                      {routines.length === 0 ? "Crear tu primera rutina" : "Activar una rutina"}
+                      <ChevronRight size={14} />
                     </Link>
                   </Button>
                 </>
@@ -164,7 +180,10 @@ export default async function DashboardPage() {
                 <>
                   <p className="text-sm text-gray-500">No tienes rutina programada para hoy.</p>
                   <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
-                    <Link href={`/routines/${activeRoutine.id}`}>Ver rutina activa →</Link>
+                    <Link href={`/routines/${activeRoutine.id}`} className="inline-flex items-center gap-1">
+                      Ver rutina activa
+                      <ChevronRight size={14} />
+                    </Link>
                   </Button>
                 </>
               )}
@@ -181,9 +200,10 @@ export default async function DashboardPage() {
               </p>
               <Link
                 href="/routines"
-                className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                className="inline-flex items-center gap-0.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
               >
-                Ver todas →
+                Ver todas
+                <ChevronRight size={13} />
               </Link>
             </div>
             <div className="space-y-2">
@@ -206,9 +226,7 @@ export default async function DashboardPage() {
                           {r.days.length} día{r.days.length !== 1 ? "s" : ""}
                         </p>
                       </div>
-                      <span className="text-gray-600 group-hover:text-indigo-400 transition-colors">
-                        →
-                      </span>
+                      <ChevronRight size={16} className="text-gray-600 group-hover:text-indigo-400 transition-colors" />
                     </div>
                   </Card>
                 </Link>
@@ -229,7 +247,7 @@ function StatCard({
 }: {
   label: string;
   value: string;
-  icon: string;
+  icon: React.ReactNode;
   highlight?: boolean;
 }) {
   return (
@@ -237,7 +255,7 @@ function StatCard({
       className={`p-4 sm:p-5 text-center ${highlight ? "border-indigo-700 bg-indigo-950/20" : ""}`}
     >
       <CardContent className="p-0">
-        <span className="text-2xl">{icon}</span>
+        <div className="flex justify-center">{icon}</div>
         <p className={`text-2xl font-bold mt-1 ${highlight ? "text-indigo-300" : "text-white"}`}>
           {value}
         </p>

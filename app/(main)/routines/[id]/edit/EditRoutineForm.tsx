@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { MUSCLE_GROUPS } from "@/constants/muscles";
 import { WEEKDAY_LABELS, WEEKDAYS } from "@/constants/weekdays";
 import type { RoutineWithDays } from "@/services/routines";
@@ -107,8 +108,9 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
     <main className="min-h-screen bg-gray-950 text-white">
       <div className="mx-auto max-w-2xl px-6 pt-10">
         <div className="mb-6">
-          <Link href={`/routines/${routine.id}`} className="text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors">
-            ← Volver
+          <Link href={`/routines/${routine.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors">
+            <ArrowLeft size={14} />
+            Volver
           </Link>
         </div>
 

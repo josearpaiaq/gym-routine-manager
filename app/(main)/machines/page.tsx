@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ImageOff } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { listMachinesPaged } from "@/services/machines";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,7 +32,10 @@ export default async function MachinesPage({ searchParams }: PageProps) {
           <Card className="p-12 text-center">
             <p className="text-gray-400">No hay máquinas registradas aún.</p>
             <Button asChild variant="link" className="mt-4 text-sm">
-              <Link href="/analyze">Analiza la primera máquina →</Link>
+              <Link href="/analyze" className="inline-flex items-center gap-1">
+                Analiza la primera máquina
+                <ChevronRight size={14} />
+              </Link>
             </Button>
           </Card>
         ) : (
@@ -73,9 +76,7 @@ export default async function MachinesPage({ searchParams }: PageProps) {
                       </div>
                     )}
                   </div>
-                  <span className="text-gray-600 group-hover:text-indigo-400 transition-colors shrink-0">
-                    →
-                  </span>
+                  <ChevronRight size={18} className="text-gray-600 group-hover:text-indigo-400 transition-colors shrink-0" />
                 </Card>
               </Link>
             ))}
@@ -86,7 +87,10 @@ export default async function MachinesPage({ searchParams }: PageProps) {
           <div className="mt-8 flex items-center justify-center gap-3">
             {page > 1 && (
               <Button asChild variant="secondary" size="sm">
-                <Link href={`/machines?page=${page - 1}`}>← Anterior</Link>
+                <Link href={`/machines?page=${page - 1}`} className="inline-flex items-center gap-1">
+                  <ChevronLeft size={14} />
+                  Anterior
+                </Link>
               </Button>
             )}
             <span className="text-sm text-gray-500">
@@ -94,7 +98,10 @@ export default async function MachinesPage({ searchParams }: PageProps) {
             </span>
             {page < totalPages && (
               <Button asChild variant="secondary" size="sm">
-                <Link href={`/machines?page=${page + 1}`}>Siguiente →</Link>
+                <Link href={`/machines?page=${page + 1}`} className="inline-flex items-center gap-1">
+                  Siguiente
+                  <ChevronRight size={14} />
+                </Link>
               </Button>
             )}
           </div>

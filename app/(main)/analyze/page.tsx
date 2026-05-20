@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Lock } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { getUserById } from "@/services/users";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,7 +16,9 @@ export default async function AnalyzePage() {
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <Card>
           <CardContent className="pt-10 pb-10 space-y-3">
-            <span className="text-5xl block">🔒</span>
+            <div className="flex justify-center mb-1">
+              <Lock size={40} className="text-gray-500" />
+            </div>
             <h1 className="text-2xl font-bold">Función no disponible</h1>
             <p className="text-gray-400 text-sm">
               El análisis de máquinas con IA está disponible próximamente para tu cuenta.

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, PlayCircle } from "lucide-react";
 import { getMachineById } from "@/services/machines";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,9 +32,10 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
         <div className="mb-6">
           <Link
             href="/machines"
-            className="text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors mb-1 inline-block"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors mb-1"
           >
-            ← Máquinas
+            <ArrowLeft size={14} />
+            Máquinas
           </Link>
         </div>
 
@@ -104,6 +106,15 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
                       </li>
                     ))}
                   </ol>
+                  <a
+                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + " tutorial gym")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 pl-10 text-xs font-medium text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <PlayCircle size={14} />
+                    Ver tutorial en YouTube
+                  </a>
                 </Card>
               );
             })

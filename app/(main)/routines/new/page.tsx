@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { MUSCLE_GROUPS } from "@/constants/muscles";
 import { WEEKDAY_LABELS, WEEKDAYS } from "@/constants/weekdays";
 import { Button } from "@/components/ui/button";
@@ -105,7 +106,10 @@ export default function NewRoutinePage() {
             size="sm"
             className="text-gray-500 hover:text-gray-300 px-0"
           >
-            <Link href="/routines">← Mis rutinas</Link>
+            <Link href="/routines" className="inline-flex items-center gap-1">
+              <ArrowLeft size={14} />
+              Mis rutinas
+            </Link>
           </Button>
         </div>
 
