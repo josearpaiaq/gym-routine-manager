@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
   }
 
-  await setSessionCookie({ userId: user.id, email: user.email, username: user.username });
+  await setSessionCookie({ userId: user.id, email: user.email, username: user.username, isAdmin: user.isAdmin });
 
   return NextResponse.json({ ok: true });
 }

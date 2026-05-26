@@ -6,7 +6,7 @@ vi.mock("next/headers", () => ({
 
 import { signSession, verifySession, signResetToken, verifyResetToken } from "@/lib/auth";
 
-const testPayload = { userId: 42, email: "test@example.com", username: "testuser" };
+const testPayload = { userId: 42, email: "test@example.com", username: "testuser", isAdmin: false };
 
 describe("signSession / verifySession", () => {
   it("round-trips a session payload", async () => {

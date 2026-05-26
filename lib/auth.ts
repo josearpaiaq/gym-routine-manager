@@ -10,6 +10,7 @@ export interface SessionPayload {
   userId: number;
   email: string;
   username: string;
+  isAdmin: boolean;
 }
 
 export async function signSession(payload: SessionPayload): Promise<string> {

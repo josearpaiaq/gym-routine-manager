@@ -48,6 +48,8 @@ import {
   getMachineById,
   listMachinesPaged,
   getMachinesByMuscles,
+  listAllMachinesPagedAdmin,
+  setMachineActive,
 } from "@/services/machines";
 
 const machineRow = {
@@ -57,6 +59,7 @@ const machineRow = {
   muscleGroups: ["Pecho", "Hombros"],
   imagePath: "https://cdn.example.com/cable.jpg",
   isGymMachine: true,
+  isActive: true,
   createdAt: new Date(),
 };
 
@@ -173,5 +176,36 @@ describe("getMachinesByMuscles", () => {
     dbCtrl.enqueue([machineRow]);
     const result = await getMachinesByMuscles(["Piernas"]);
     expect(result).toHaveLength(0);
+  });
+});
+
+describe("listAllMachinesPagedAdmin", () => {
+  it("returns all machines including inactive, with correct metadata", async () => {
+    const inactive = { ...machineRow, id: 2, isActive: false };
+    dbCtrl.enqueue([machineRow, inactive]);
+    dbCtrl.enqueue([{ total: 2 }]);
+    const result = await listAllMachinesPagedAdmin(1);
+    expect(result.machines).toHaveLength(2);
+    expect(result.total).toBe(2);
+    expect(result.machines[1].is_active).toBe(false);
+  });
+
+  it("calculates totalPages correctly", async () => {
+    dbCtrl.enqueue([machineRow]);
+    dbCtrl.enqueue([{ total: 40 }]);
+    const result = await listAllMachinesPagedAdmin(1, 20);
+    expect(result.totalPages).toBe(2);
+  });
+});
+
+describe("setMachineActive", () => {
+  it("resolves without error when deactivating", async () => {
+    dbCtrl.enqueue([]);
+    await expect(setMachineActive(1, false)).resolves.not.toThrow();
+  });
+
+  it("resolves without error when activating", async () => {
+    dbCtrl.enqueue([]);
+    await expect(setMachineActive(1, true)).resolves.not.toThrow();
   });
 });

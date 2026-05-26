@@ -36,12 +36,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (!user.isEnabled) {
+    return NextResponse.json(
+      { error: "Tu cuenta ha sido desactivada. Contacta al administrador." },
+      { status: 403 }
+    );
+  }
+
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
   }
 
-  await setSessionCookie({ userId: user.id, email: user.email, username: user.username });
+  await setSessionCookie({
+    userId: user.id,
+    email: user.email,
+    username: user.username,
+    isAdmin: user.isAdmin,
+  });
 
   return NextResponse.json({ ok: true });
 }

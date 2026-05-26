@@ -31,6 +31,7 @@ export interface MachinePage {
     muscle_groups: string[];
     image_path: string | null;
     is_gym_machine: boolean;
+    is_active: boolean;
   }>;
   total: number;
   page: number;
@@ -143,6 +144,35 @@ export async function saveMachine(
 export async function listMachinesPaged(page: number, perPage = 10): Promise<MachinePage> {
   const offset = (page - 1) * perPage;
   const [rows, totals] = await Promise.all([
+    db
+      .select()
+      .from(machines)
+      .where(eq(machines.isActive, true))
+      .orderBy(asc(machines.canonicalName))
+      .limit(perPage)
+      .offset(offset),
+    db.select({ total: count() }).from(machines).where(eq(machines.isActive, true)),
+  ]);
+
+  const total = totals[0]?.total ?? 0;
+  return {
+    machines: rows.map((m) => ({
+      id: m.id,
+      canonical_name: m.canonicalName,
+      muscle_groups: m.muscleGroups,
+      image_path: m.imagePath ?? null,
+      is_gym_machine: m.isGymMachine,
+      is_active: m.isActive,
+    })),
+    total,
+    page,
+    totalPages: Math.max(1, Math.ceil(total / perPage)),
+  };
+}
+
+export async function listAllMachinesPagedAdmin(page: number, perPage = 20): Promise<MachinePage> {
+  const offset = (page - 1) * perPage;
+  const [rows, totals] = await Promise.all([
     db.select().from(machines).orderBy(asc(machines.canonicalName)).limit(perPage).offset(offset),
     db.select({ total: count() }).from(machines),
   ]);
@@ -155,11 +185,16 @@ export async function listMachinesPaged(page: number, perPage = 10): Promise<Mac
       muscle_groups: m.muscleGroups,
       image_path: m.imagePath ?? null,
       is_gym_machine: m.isGymMachine,
+      is_active: m.isActive,
     })),
     total,
     page,
     totalPages: Math.max(1, Math.ceil(total / perPage)),
   };
+}
+
+export async function setMachineActive(id: number, isActive: boolean): Promise<void> {
+  await db.update(machines).set({ isActive }).where(eq(machines.id, id));
 }
 
 export async function getMachinesByMuscles(
@@ -168,7 +203,11 @@ export async function getMachinesByMuscles(
   Array<{ id: number; canonical_name: string; muscle_groups: string[]; image_path: string | null }>
 > {
   if (!muscles.length) return [];
-  const all = await db.select().from(machines).orderBy(asc(machines.canonicalName));
+  const all = await db
+    .select()
+    .from(machines)
+    .where(eq(machines.isActive, true))
+    .orderBy(asc(machines.canonicalName));
   const musclesLower = muscles.map((m) => m.toLowerCase());
   return all
     .filter((m) => m.muscleGroups.some((g) => musclesLower.includes(g.toLowerCase())))

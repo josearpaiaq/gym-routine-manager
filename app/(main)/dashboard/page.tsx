@@ -64,7 +64,7 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-3 gap-3 sm:gap-4">
           <StatCard
             label="Racha"
-            value={`${stats.streak}d`}
+            value={`${stats.streak}s`}
             icon={
               stats.streak >= 3 ? (
                 <Flame size={22} className="text-orange-400" />
