@@ -1,4 +1,4 @@
-import { eq, or } from "drizzle-orm";
+import { asc, eq, or } from "drizzle-orm";
 import { db } from "@/db";
 import { users, type User } from "@/db/schema";
 
@@ -42,4 +42,15 @@ export async function updatePasswordHash(email: string, newHash: string): Promis
 
 export async function deleteUser(id: number): Promise<void> {
   await db.delete(users).where(eq(users.id, id));
+}
+
+export async function listAllUsers(): Promise<User[]> {
+  return db.select().from(users).orderBy(asc(users.createdAt));
+}
+
+export async function updateUserById(
+  id: number,
+  fields: Partial<Pick<User, "isEnabled" | "analyzerEnabled" | "isAdmin">>
+): Promise<void> {
+  await db.update(users).set(fields).where(eq(users.id, id));
 }

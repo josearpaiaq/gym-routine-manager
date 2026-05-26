@@ -7,6 +7,8 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash").notNull(),
   emailVerified: boolean("email_verified").notNull().default(false),
   analyzerEnabled: boolean("analyzer_enabled").notNull().default(false),
+  isAdmin: boolean("is_admin").notNull().default(false),
+  isEnabled: boolean("is_enabled").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -26,6 +28,7 @@ export const machines = pgTable("machines", {
   muscleGroups: jsonb("muscle_groups").notNull().$type<string[]>(),
   imagePath: text("image_path"),
   isGymMachine: boolean("is_gym_machine").notNull().default(true),
+  isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

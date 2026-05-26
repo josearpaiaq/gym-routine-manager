@@ -51,6 +51,8 @@ import {
   markEmailVerified,
   updatePasswordHash,
   deleteUser,
+  listAllUsers,
+  updateUserById,
 } from "@/services/users";
 
 const mockUser = {
@@ -60,6 +62,8 @@ const mockUser = {
   passwordHash: "hashed",
   emailVerified: false,
   analyzerEnabled: false,
+  isAdmin: false,
+  isEnabled: true,
   createdAt: new Date(),
 };
 
@@ -127,5 +131,39 @@ describe("deleteUser", () => {
   it("resolves without error", async () => {
     dbCtrl.enqueue([]);
     await expect(deleteUser(1)).resolves.not.toThrow();
+  });
+});
+
+describe("listAllUsers", () => {
+  it("returns all users ordered by createdAt", async () => {
+    const secondUser = { ...mockUser, id: 2, username: "other" };
+    dbCtrl.enqueue([mockUser, secondUser]);
+    const result = await listAllUsers();
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe(1);
+    expect(result[1].id).toBe(2);
+  });
+
+  it("returns empty array when no users", async () => {
+    dbCtrl.enqueue([]);
+    const result = await listAllUsers();
+    expect(result).toEqual([]);
+  });
+});
+
+describe("updateUserById", () => {
+  it("resolves without error when toggling isEnabled", async () => {
+    dbCtrl.enqueue([]);
+    await expect(updateUserById(1, { isEnabled: false })).resolves.not.toThrow();
+  });
+
+  it("resolves without error when toggling analyzerEnabled", async () => {
+    dbCtrl.enqueue([]);
+    await expect(updateUserById(1, { analyzerEnabled: true })).resolves.not.toThrow();
+  });
+
+  it("resolves without error when toggling isAdmin", async () => {
+    dbCtrl.enqueue([]);
+    await expect(updateUserById(1, { isAdmin: true })).resolves.not.toThrow();
   });
 });
