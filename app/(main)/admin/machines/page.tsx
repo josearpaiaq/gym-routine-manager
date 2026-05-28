@@ -15,7 +15,7 @@ export default async function AdminMachinesPage({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-text-muted">
           {data.total} máquina{data.total !== 1 ? "s" : ""} en total
         </p>
       </div>
@@ -23,13 +23,13 @@ export default async function AdminMachinesPage({
       <Card className="overflow-hidden p-0">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-800 bg-gray-900">
-              <th className="px-4 py-3 text-left font-medium text-gray-400">Máquina</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-400 hidden sm:table-cell">Músculos</th>
-              <th className="px-4 py-3 text-right font-medium text-gray-400">Estado</th>
+            <tr className="border-b border-border bg-card">
+              <th className="px-4 py-3 text-left font-medium text-text-muted">Máquina</th>
+              <th className="px-4 py-3 text-left font-medium text-text-muted hidden sm:table-cell">Músculos</th>
+              <th className="px-4 py-3 text-right font-medium text-text-muted">Estado</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800">
+          <tbody className="divide-y divide-border">
             {data.machines.map((m) => (
               <tr key={m.id} className={`${!m.is_active ? "opacity-50" : ""}`}>
                 <td className="px-4 py-3 font-medium">{m.canonical_name}</td>
@@ -65,7 +65,7 @@ export default async function AdminMachinesPage({
               className={`px-3 py-1.5 rounded text-sm ${
                 p === page
                   ? "bg-indigo-600 text-white"
-                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                  : "bg-card-hover text-text-muted hover:bg-card-hover/80"
               }`}
             >
               {p}

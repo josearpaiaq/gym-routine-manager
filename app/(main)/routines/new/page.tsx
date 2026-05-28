@@ -97,14 +97,14 @@ export default function NewRoutinePage() {
   const addedDayNumbers = new Set(days.map((d) => d.day_number));
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-canvas text-text">
       <div className="mx-auto max-w-2xl px-6 py-10">
         <div className="mb-6">
           <Button
             asChild
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-gray-300 px-0"
+            className="text-text-muted hover:text-text px-0"
           >
             <Link href="/routines" className="inline-flex items-center gap-1">
               <ArrowLeft size={14} />
@@ -129,7 +129,7 @@ export default function NewRoutinePage() {
           {/* Days */}
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-gray-300 uppercase tracking-widest mb-3">
+              <p className="text-sm font-medium text-text uppercase tracking-widest mb-3">
                 Días ({days.length}/7)
               </p>
               <div className="flex flex-wrap gap-2">
@@ -175,14 +175,14 @@ export default function NewRoutinePage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => removeDay(i)}
-                          className="text-gray-600 hover:text-red-400"
+                          className="text-text-muted hover:text-red-400"
                         >
                           Eliminar
                         </Button>
                       </div>
 
                       <div>
-                        <p className="text-xs text-gray-500 mb-2">Músculos a trabajar</p>
+                        <p className="text-xs text-text-muted mb-2">Músculos a trabajar</p>
                         <div className="flex flex-wrap gap-2">
                           {MUSCLE_GROUPS.map((muscle) => {
                             const selected = day.target_muscles.includes(muscle);

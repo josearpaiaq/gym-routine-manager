@@ -19,22 +19,22 @@ export default async function ProfilePage() {
   }).format(user.createdAt);
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-canvas text-text">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10 space-y-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">Mi perfil</h1>
-          <p className="text-gray-400 text-sm mt-1">Miembro desde {memberSince}</p>
+          <p className="text-text-muted text-sm mt-1">Miembro desde {memberSince}</p>
         </div>
 
         <Card className="p-6 space-y-3">
           <h2 className="font-semibold text-lg">Información de cuenta</h2>
           <div className="space-y-1">
-            <p className="text-sm text-gray-400">Usuario</p>
-            <p className="text-white">{user.username}</p>
+            <p className="text-sm text-text-muted">Usuario</p>
+            <p className="text-text">{user.username}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm text-gray-400">Correo electrónico</p>
-            <p className="text-white">{user.email}</p>
+            <p className="text-sm text-text-muted">Correo electrónico</p>
+            <p className="text-text">{user.email}</p>
           </div>
         </Card>
 
@@ -46,7 +46,7 @@ export default async function ProfilePage() {
         <Card className="p-6 space-y-4 border-red-900/30">
           <div>
             <h2 className="font-semibold text-lg text-red-400">Zona de peligro</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Acciones irreversibles</p>
+            <p className="text-xs text-text-muted mt-0.5">Acciones irreversibles</p>
           </div>
           <DeleteAccountSection username={user.username} />
         </Card>

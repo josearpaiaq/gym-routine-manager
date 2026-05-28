@@ -10,7 +10,7 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-text-muted">
         {users.length} usuario{users.length !== 1 ? "s" : ""} registrado{users.length !== 1 ? "s" : ""}
       </p>
 
@@ -18,15 +18,15 @@ export default async function AdminUsersPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-800 bg-gray-900">
-                <th className="px-4 py-3 text-left font-medium text-gray-400">Usuario</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-400 hidden sm:table-cell">Email</th>
-                <th className="px-4 py-3 text-center font-medium text-gray-400">Activo</th>
-                <th className="px-4 py-3 text-center font-medium text-gray-400">Analizador</th>
-                <th className="px-4 py-3 text-center font-medium text-gray-400">Admin</th>
+              <tr className="border-b border-border bg-card">
+                <th className="px-4 py-3 text-left font-medium text-text-muted">Usuario</th>
+                <th className="px-4 py-3 text-left font-medium text-text-muted hidden sm:table-cell">Email</th>
+                <th className="px-4 py-3 text-center font-medium text-text-muted">Activo</th>
+                <th className="px-4 py-3 text-center font-medium text-text-muted">Analizador</th>
+                <th className="px-4 py-3 text-center font-medium text-text-muted">Admin</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800">
+            <tbody className="divide-y divide-border">
               {users.map((u) => (
                 <tr key={u.id} className={!u.isEnabled ? "opacity-50" : ""}>
                   <td className="px-4 py-3">
@@ -40,7 +40,7 @@ export default async function AdminUsersPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-400 hidden sm:table-cell">{u.email}</td>
+                  <td className="px-4 py-3 text-text-muted hidden sm:table-cell">{u.email}</td>
                   <td className="px-4 py-3 text-center">
                     <ToggleUserButton
                       userId={u.id}

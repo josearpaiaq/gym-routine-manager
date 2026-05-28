@@ -99,14 +99,14 @@ export default function AssignedMachineRow({
   return (
     <>
       {ConfirmModal}
-      <div className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-3">
+      <div className="rounded-xl bg-card-hover border border-border px-4 py-3">
         {!editing ? (
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-medium text-white">{machine.name}</p>
-              {summary && <p className="text-xs text-gray-400 mt-0.5">{summary}</p>}
+              <p className="text-sm font-medium text-text">{machine.name}</p>
+              {summary && <p className="text-xs text-text-muted mt-0.5">{summary}</p>}
               {machine.notes && (
-                <p className="text-xs text-gray-500 mt-0.5 italic">{machine.notes}</p>
+                <p className="text-xs text-text-muted mt-0.5 italic">{machine.notes}</p>
               )}
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -131,7 +131,7 @@ export default function AssignedMachineRow({
           </div>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm font-medium text-white">{machine.name}</p>
+            <p className="text-sm font-medium text-text">{machine.name}</p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div className="space-y-1">
                 <Label className="text-xs">Series</Label>

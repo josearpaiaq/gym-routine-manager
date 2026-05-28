@@ -102,14 +102,14 @@ export default function NavbarMenu({ session, analyzerEnabled }: NavbarMenuProps
       <div ref={menuRef} className="sm:hidden relative">
         <button
           onClick={() => setOpen((v) => !v)}
-          className="p-2 text-gray-400 hover:text-white transition-colors"
+          className="p-2 text-text-muted hover:text-text transition-colors"
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
         >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
 
         {open && (
-          <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-gray-800 bg-gray-900 shadow-2xl z-50 py-2 overflow-hidden">
+          <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border bg-overlay shadow-2xl z-50 py-2 overflow-hidden">
             <MobileLink href="/machines" icon={<Dumbbell size={16} />} onClick={() => setOpen(false)}>
               Máquinas
             </MobileLink>
@@ -133,13 +133,13 @@ export default function NavbarMenu({ session, analyzerEnabled }: NavbarMenuProps
                     Admin
                   </MobileLink>
                 )}
-                <div className="my-1 border-t border-gray-800" />
+                <div className="my-1 border-t border-border" />
                 <MobileLink href="/profile" icon={<UserRound size={16} />} onClick={() => setOpen(false)}>
                   Perfil — {session.username}
                 </MobileLink>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-text-muted hover:bg-card-hover hover:text-text transition-colors"
                 >
                   <LogOut size={16} />
                   Cerrar sesión
@@ -178,8 +178,8 @@ function MobileLink({
       className={cn(
         "flex items-center gap-3 px-4 py-2.5 text-sm transition-colors",
         isActive
-          ? "text-white bg-gray-800"
-          : "text-gray-300 hover:bg-gray-800 hover:text-white"
+          ? "text-text bg-card-hover"
+          : "text-text-muted hover:bg-card-hover hover:text-text"
       )}
     >
       {icon}

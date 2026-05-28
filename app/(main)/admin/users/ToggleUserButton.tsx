@@ -38,7 +38,7 @@ export default function ToggleUserButton({
     <button
       onClick={toggle}
       disabled={pending || disabledProp}
-      className={`transition-colors disabled:opacity-30 ${current ? "text-indigo-400 hover:text-indigo-300" : "text-gray-600 hover:text-gray-400"}`}
+      className={`transition-colors disabled:opacity-30 ${current ? "text-indigo-400 hover:text-indigo-300" : "text-text-muted hover:text-text-muted"}`}
       title={current ? "Desactivar" : "Activar"}
     >
       <Icon size={24} strokeWidth={1.5} />

@@ -105,10 +105,10 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
   const addedDayNumbers = new Set(days.map((d) => d.day_number));
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-canvas text-text">
       <div className="mx-auto max-w-2xl px-6 pt-10">
         <div className="mb-6">
-          <Link href={`/routines/${routine.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors">
+          <Link href={`/routines/${routine.id}`} className="inline-flex items-center gap-1 text-sm font-semibold text-text-muted hover:text-text transition-colors">
             <ArrowLeft size={14} />
             Volver
           </Link>
@@ -126,7 +126,7 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
           {/* Days */}
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-gray-300 uppercase tracking-widest mb-3">
+              <p className="text-sm font-medium text-text uppercase tracking-widest mb-3">
                 Días ({days.length}/7)
               </p>
               <div className="flex flex-wrap gap-2">
@@ -171,14 +171,14 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
                           variant="ghost"
                           size="sm"
                           onClick={() => removeDay(i)}
-                          className="text-gray-600 hover:text-red-400"
+                          className="text-text-muted hover:text-red-400"
                         >
                           Eliminar
                         </Button>
                       </div>
 
                       <div>
-                        <p className="text-xs text-gray-500 mb-2">Músculos a trabajar</p>
+                        <p className="text-xs text-text-muted mb-2">Músculos a trabajar</p>
                         <div className="flex flex-wrap gap-2">
                           {MUSCLE_GROUPS.map((muscle) => {
                             const selected = day.target_muscles.includes(muscle);
@@ -204,7 +204,7 @@ export default function EditRoutineForm({ routine }: { routine: RoutineWithDays 
           </div>
 
           </div>
-          <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-6 bg-gray-950 border-t border-gray-800/60">
+          <div className="sticky bottom-0 -mx-6 px-6 pt-4 pb-6 bg-canvas border-t border-border/60">
             {error && (
               <Alert variant="destructive" className="mb-3">
                 <AlertDescription>{error}</AlertDescription>

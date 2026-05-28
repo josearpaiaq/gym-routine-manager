@@ -49,3 +49,7 @@ next-env.d.ts
 /db/*.db-wal
 
 video-promo/
+
+# superpowers skill
+docs/superpowers
+.superpowers

@@ -17,13 +17,13 @@ export default async function AnalyzePage() {
         <Card>
           <CardContent className="pt-10 pb-10 space-y-3">
             <div className="flex justify-center mb-1">
-              <Lock size={40} className="text-gray-500" />
+              <Lock size={40} className="text-text-muted" />
             </div>
             <h1 className="text-2xl font-bold">Función no disponible</h1>
-            <p className="text-gray-400 text-sm">
+            <p className="text-text-muted text-sm">
               El análisis de máquinas con IA está disponible próximamente para tu cuenta.
             </p>
-            <p className="text-gray-500 text-xs">Próximamente</p>
+            <p className="text-text-muted text-xs">Próximamente</p>
           </CardContent>
         </Card>
       </div>

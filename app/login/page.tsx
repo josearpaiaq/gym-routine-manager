@@ -54,13 +54,13 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
+    <main className="min-h-screen bg-canvas text-text flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Link href="/" className="text-2xl font-bold tracking-tight">
             GymManager
           </Link>
-          <p className="mt-2 text-gray-400 text-sm">Inicia sesión en tu cuenta</p>
+          <p className="mt-2 text-text-muted text-sm">Inicia sesión en tu cuenta</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -118,7 +118,7 @@ function LoginForm() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
+        <p className="mt-6 text-center text-sm text-text-muted">
           ¿No tienes cuenta?{" "}
           <Button variant="link" asChild className="text-sm p-0">
             <Link href="/signup">Regístrate</Link>

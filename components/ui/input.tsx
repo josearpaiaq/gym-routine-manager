@@ -16,7 +16,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={showPassword ? "text" : "password"}
             className={cn(
-              "flex w-full rounded-xl bg-gray-900 border border-gray-700 px-4 py-3 pr-10 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-indigo-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+              "flex w-full rounded-xl bg-card border border-border px-4 py-3 pr-10 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-indigo-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50",
               className
             )}
             ref={ref}
@@ -25,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors"
             tabIndex={-1}
             aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
           >
@@ -39,7 +39,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex w-full rounded-xl bg-gray-900 border border-gray-700 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-indigo-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full rounded-xl bg-card border border-border px-4 py-3 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-indigo-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={ref}

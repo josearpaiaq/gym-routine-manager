@@ -1,4 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
+import sharp from "sharp";
 import { NextRequest, NextResponse } from "next/server";
 import mockResponse from "@/fixtures/cable-crossover.json";
 import { getMachineByNormalizedName, saveMachine } from "@/services/machines";
@@ -7,14 +8,25 @@ import { getSession } from "@/lib/auth";
 import { uploadImageToR2 } from "@/lib/r2";
 import { normalizeName, stripFences } from "@/lib/analyze-utils";
 
-const client = new Anthropic();
+const client = new Groq();
 
-const SYSTEM_PROMPT = `Eres un experto entrenador personal y especialista en equipamiento de gimnasio.
-Cuando recibas una imagen de una máquina de gym, analízala y responde ÚNICAMENTE con un objeto JSON válido (sin markdown, sin bloques de código) con esta estructura exacta:
+const VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+const TEXT_MODEL = "llama-3.3-70b-versatile";
+
+const NAME_ONLY_PROMPT = `Eres un experto en equipamiento de gimnasio.
+Observa la imagen y responde ÚNICAMENTE con un objeto JSON (sin markdown):
+{"machineName": "nombre exacto de la máquina en español", "isGymMachine": true}
+Si la imagen NO muestra una máquina de ejercicio de gym, responde:
+{"machineName": "No identificada", "isGymMachine": false}`;
+
+const buildAnalysisPrompt = (machineName: string) =>
+  `Eres un experto entrenador personal y especialista en equipamiento de gimnasio.
+Genera información detallada sobre la máquina de gym: "${machineName}".
+Responde ÚNICAMENTE con un objeto JSON válido (sin markdown, sin bloques de código) con esta estructura exacta:
 
 {
   "isGymMachine": true,
-  "machineName": "nombre de la máquina en español",
+  "machineName": "${machineName}",
   "muscleGroups": ["músculo1", "músculo2", "músculo3"],
   "exercises": [
     {
@@ -25,16 +37,7 @@ Cuando recibas una imagen de una máquina de gym, analízala y responde ÚNICAME
   ]
 }
 
-Incluye entre 3 y 4 ejercicios.
-Si la imagen NO muestra una máquina de ejercicio de gimnasio, responde:
-{"isGymMachine": false, "machineName": "No identificada", "muscleGroups": [], "exercises": []}`;
-
-const NAME_ONLY_PROMPT = `Eres un experto en equipamiento de gimnasio.
-Observa la imagen y responde ÚNICAMENTE con un objeto JSON (sin markdown):
-{"machineName": "nombre exacto de la máquina en español", "isGymMachine": true}
-Si la imagen NO muestra una máquina de ejercicio de gym, responde:
-{"machineName": "No identificada", "isGymMachine": false}`;
-
+Incluye entre 3 y 4 ejercicios.`;
 
 export async function POST(request: NextRequest) {
   if (process.env.MOCK_ANALYZE === "true") {
@@ -59,58 +62,42 @@ export async function POST(request: NextRequest) {
     }
 
     const arrayBuffer = await imageFile.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString("base64");
+    const resized = await sharp(Buffer.from(arrayBuffer))
+      .resize(1024, 1024, { fit: "inside", withoutEnlargement: true })
+      .jpeg({ quality: 80 })
+      .toBuffer();
 
-    const ext = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpeg";
-    const mimeMap: Record<string, string> = {
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      png: "image/png",
-      gif: "image/gif",
-      webp: "image/webp",
-    };
-    const mediaType = (mimeMap[ext] ?? imageFile.type ?? "image/jpeg") as
-      | "image/jpeg"
-      | "image/png"
-      | "image/gif"
-      | "image/webp";
+    const base64 = resized.toString("base64");
+    const imageUrl = `data:image/jpeg;base64,${base64}`;
 
-    const imageContent = [
-      {
-        type: "image" as const,
-        source: { type: "base64" as const, media_type: mediaType, data: base64 },
-      },
-    ];
-
-    // Phase 1: identify machine name only (cheap call)
-    const phase1 = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 50,
-      system: NAME_ONLY_PROMPT,
+    // Phase 1: identify machine name via Groq Vision
+    const phase1 = await client.chat.completions.create({
+      model: VISION_MODEL,
+      max_tokens: 100,
       messages: [
+        {
+          role: "system",
+          content: NAME_ONLY_PROMPT,
+        },
         {
           role: "user",
           content: [
-            ...imageContent,
+            { type: "image_url", image_url: { url: imageUrl } },
             { type: "text", text: "¿Qué máquina de gimnasio aparece en la imagen?" },
           ],
         },
       ],
     });
 
-    const nameBlock = phase1.content.find((b) => b.type === "text");
-    if (!nameBlock || nameBlock.type !== "text") {
-      return NextResponse.json({ error: "Sin respuesta del modelo" }, { status: 500 });
-    }
-
+    const nameText = phase1.choices[0]?.message?.content ?? "";
     let nameOnly: { machineName: string; isGymMachine: boolean };
     try {
-      nameOnly = JSON.parse(stripFences(nameBlock.text)) as {
+      nameOnly = JSON.parse(stripFences(nameText)) as {
         machineName: string;
         isGymMachine: boolean;
       };
     } catch {
-      console.error("[analyze] Phase 1 parse failed:", nameBlock.text);
+      console.error("[analyze] Phase 1 parse failed:", nameText);
       return NextResponse.json(
         { error: "No se pudo procesar la respuesta del servidor" },
         { status: 500 }
@@ -129,30 +116,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(cached);
     }
 
-    // Phase 2: full analysis (cache miss only)
-    const phase2 = await client.messages.create({
-      model: "claude-sonnet-4-6",
+    // Phase 2: full analysis via Groq LLM (text only, no image)
+    const phase2 = await client.chat.completions.create({
+      model: TEXT_MODEL,
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
       messages: [
         {
           role: "user",
-          content: [
-            ...imageContent,
-            {
-              type: "text",
-              text: "Analiza esta máquina de gimnasio y devuelve la información en el formato JSON indicado.",
-            },
-          ],
+          content: buildAnalysisPrompt(nameOnly.machineName),
         },
       ],
     });
 
-    const textBlock = phase2.content.find((b) => b.type === "text");
-    if (!textBlock || textBlock.type !== "text") {
-      return NextResponse.json({ error: "Sin respuesta del modelo" }, { status: 500 });
-    }
-
+    const analysisText = phase2.choices[0]?.message?.content ?? "";
     let parsed: {
       isGymMachine: boolean;
       machineName: string;
@@ -160,7 +136,7 @@ export async function POST(request: NextRequest) {
       exercises: Array<{ name: string; targetMuscles: string; execution: string[] }>;
     };
     try {
-      parsed = JSON.parse(stripFences(textBlock.text));
+      parsed = JSON.parse(stripFences(analysisText));
     } catch {
       return NextResponse.json(
         { error: "No se pudo procesar la respuesta del servidor" },

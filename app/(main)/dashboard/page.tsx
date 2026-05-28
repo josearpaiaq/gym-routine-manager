@@ -44,14 +44,14 @@ export default async function DashboardPage() {
   const today = new Date();
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-canvas text-text">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10 space-y-8">
         {/* Header */}
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">
             Hola, {session.username}
           </h1>
-          <p className="text-gray-400 text-sm mt-1 capitalize">
+          <p className="text-text-muted text-sm mt-1 capitalize">
             {today.toLocaleDateString("es", {
               weekday: "long",
               day: "numeric",
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
               stats.streak >= 3 ? (
                 <Flame size={22} className="text-orange-400" />
               ) : (
-                <Moon size={22} className="text-gray-500" />
+                <Moon size={22} className="text-text-muted" />
               )
             }
             highlight={stats.streak >= 3}
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
 
         {/* Last 7 days */}
         <Card className="p-5">
-          <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-4">
+          <p className="text-xs uppercase tracking-widest text-text-muted font-semibold mb-4">
             Últimos 7 días
           </p>
           <div className="flex justify-between gap-1">
@@ -103,13 +103,13 @@ export default async function DashboardPage() {
                       active
                         ? "bg-indigo-600 text-white ring-indigo-500"
                         : isToday
-                          ? "bg-gray-800 text-gray-400 ring-indigo-800"
-                          : "bg-gray-800/50 text-gray-700 ring-transparent"
+                          ? "bg-card-hover text-text-muted ring-indigo-800"
+                          : "bg-card-hover/50 text-text-muted ring-transparent"
                     }`}
                   >
                     {active && <Check size={14} strokeWidth={3} />}
                   </div>
-                  <span className={`text-xs ${isToday ? "text-indigo-400 font-medium" : "text-gray-600"}`}>
+                  <span className={`text-xs ${isToday ? "text-indigo-400 font-medium" : "text-text-muted"}`}>
                     {SHORT_DAYS[d.getDay()]}
                   </span>
                 </div>
@@ -120,17 +120,17 @@ export default async function DashboardPage() {
 
         {/* Today */}
         <div>
-          <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-3">
+          <p className="text-xs uppercase tracking-widest text-text-muted font-semibold mb-3">
             Hoy — {WEEKDAY_LABELS[todayDayNum]}
           </p>
 
           {todayLog ? (
-            <Card className="p-5 border-indigo-800/50 bg-indigo-950/20">
+            <Card className="p-5 border-indigo-200 bg-indigo-50 dark:border-indigo-800/50 dark:bg-indigo-950/20">
               <div className="flex items-center gap-3">
                 <CheckCircle2 size={28} className="text-indigo-400 shrink-0" />
                 <div>
                   <p className="font-medium">Entrenamiento completado</p>
-                  <p className="text-sm text-gray-400">¡Excelente trabajo hoy!</p>
+                  <p className="text-sm text-text-muted">¡Excelente trabajo hoy!</p>
                 </div>
               </div>
             </Card>
@@ -140,7 +140,7 @@ export default async function DashboardPage() {
                 <Card key={day.id} className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs text-indigo-400 font-medium mb-0.5">
+                      <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium mb-0.5">
                         {day.routineName}
                       </p>
                       <h3 className="font-semibold">{day.name}</h3>
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
             <Card className="p-5">
               {!activeRoutine ? (
                 <>
-                  <p className="text-sm text-gray-500">No tienes ninguna rutina activa.</p>
+                  <p className="text-sm text-text-muted">No tienes ninguna rutina activa.</p>
                   <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
                     <Link href="/routines" className="inline-flex items-center gap-1">
                       {routines.length === 0 ? "Crear tu primera rutina" : "Activar una rutina"}
@@ -178,7 +178,7 @@ export default async function DashboardPage() {
                 </>
               ) : (
                 <>
-                  <p className="text-sm text-gray-500">No tienes rutina programada para hoy.</p>
+                  <p className="text-sm text-text-muted">No tienes rutina programada para hoy.</p>
                   <Button asChild variant="link" className="p-0 h-auto mt-2 text-sm">
                     <Link href={`/routines/${activeRoutine.id}`} className="inline-flex items-center gap-1">
                       Ver rutina activa
@@ -195,12 +195,12 @@ export default async function DashboardPage() {
         {routines.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
+              <p className="text-xs uppercase tracking-widest text-text-muted font-semibold">
                 Mis rutinas
               </p>
               <Link
                 href="/routines"
-                className="inline-flex items-center gap-0.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                className="inline-flex items-center gap-0.5 text-xs text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors"
               >
                 Ver todas
                 <ChevronRight size={13} />
@@ -209,11 +209,11 @@ export default async function DashboardPage() {
             <div className="space-y-2">
               {routines.slice(0, 3).map((r) => (
                 <Link key={r.id} href={`/routines/${r.id}`} className="group block">
-                  <Card className={`px-4 py-3 hover:border-indigo-700 transition-colors ${r.is_active ? "border-indigo-700 bg-indigo-950/10" : ""}`}>
+                  <Card className={`px-4 py-3 hover:border-indigo-500 transition-colors ${r.is_active ? "border-indigo-300 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-950/10" : ""}`}>
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-medium group-hover:text-indigo-300 transition-colors">
+                          <p className="font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
                             {r.name}
                           </p>
                           {r.is_active && (
@@ -222,11 +222,11 @@ export default async function DashboardPage() {
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 mt-0.5">
+                        <p className="text-xs text-text-muted mt-0.5">
                           {r.days.length} día{r.days.length !== 1 ? "s" : ""}
                         </p>
                       </div>
-                      <ChevronRight size={16} className="text-gray-600 group-hover:text-indigo-400 transition-colors" />
+                      <ChevronRight size={16} className="text-text-muted group-hover:text-indigo-400 transition-colors" />
                     </div>
                   </Card>
                 </Link>
@@ -252,14 +252,14 @@ function StatCard({
 }) {
   return (
     <Card
-      className={`p-4 sm:p-5 text-center ${highlight ? "border-indigo-700 bg-indigo-950/20" : ""}`}
+      className={`p-4 sm:p-5 text-center ${highlight ? "border-indigo-300 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-950/20" : ""}`}
     >
       <CardContent className="p-0">
         <div className="flex justify-center">{icon}</div>
-        <p className={`text-2xl font-bold mt-1 ${highlight ? "text-indigo-300" : "text-white"}`}>
+        <p className={`text-2xl font-bold mt-1 ${highlight ? "text-indigo-600 dark:text-indigo-300" : "text-text"}`}>
           {value}
         </p>
-        <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+        <p className="text-xs text-text-muted mt-0.5">{label}</p>
       </CardContent>
     </Card>
   );

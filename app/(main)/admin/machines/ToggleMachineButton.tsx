@@ -32,7 +32,7 @@ export default function ToggleMachineButton({
     <button
       onClick={toggle}
       disabled={pending}
-      className={`transition-colors disabled:opacity-50 ${active ? "text-indigo-400 hover:text-indigo-300" : "text-gray-600 hover:text-gray-400"}`}
+      className={`transition-colors disabled:opacity-50 ${active ? "text-indigo-400 hover:text-indigo-300" : "text-text-muted hover:text-text-muted"}`}
       title={active ? "Desactivar" : "Activar"}
     >
       <Icon size={28} strokeWidth={1.5} />
