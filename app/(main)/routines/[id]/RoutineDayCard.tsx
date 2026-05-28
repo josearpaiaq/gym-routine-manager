@@ -68,7 +68,7 @@ export default function RoutineDayCard({
 
   return (
     <Card className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-800">
+      <div className="px-5 py-4 border-b border-border">
         <div className="flex items-center gap-3">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold">
             {WEEKDAY_LABELS[day.day_number]?.slice(0, 2) ?? day.day_number}
@@ -92,7 +92,7 @@ export default function RoutineDayCard({
       <CardContent className="pt-4 space-y-4">
         {assigned.length > 0 ? (
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
+            <p className="text-xs uppercase tracking-widest text-text-muted font-semibold">
               Ejercicios asignados
             </p>
             {assigned.map((m) => (
@@ -107,13 +107,13 @@ export default function RoutineDayCard({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-500">No hay ejercicios asignados a este día.</p>
+          <p className="text-sm text-text-muted">No hay ejercicios asignados a este día.</p>
         )}
 
         {unassigned.length > 0 && (
           <div>
             <span
-              className="flex gap-1 items-center text-sm font-semibold text-gray-500 hover:text-gray-300 hover:bg-none transition-colors hover:cursor-pointer"
+              className="flex gap-1 items-center text-sm font-semibold text-text-muted hover:text-text hover:bg-none transition-colors hover:cursor-pointer"
               onClick={() => setAdding((v) => !v)}
             >
               {adding ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -125,10 +125,10 @@ export default function RoutineDayCard({
                 {unassigned.map((m) => (
                   <div
                     key={m.id}
-                    className="flex items-center justify-between rounded-xl bg-gray-800/60 border border-gray-700 px-3 py-2"
+                    className="flex items-center justify-between rounded-xl bg-card-hover/60 border border-border px-3 py-2"
                   >
                     <div>
-                      <span className="text-sm text-white">{m.canonical_name}</span>
+                      <span className="text-sm text-text">{m.canonical_name}</span>
                       <div className="flex flex-wrap gap-1 mt-0.5">
                         {m.muscle_groups
                           .filter((g) =>
@@ -137,7 +137,7 @@ export default function RoutineDayCard({
                           .map((g) => (
                             <Badge
                               key={g}
-                              className="bg-indigo-900/40 border-indigo-800 text-indigo-400 text-xs"
+                              className="bg-indigo-100 border-indigo-200 text-indigo-700 dark:bg-indigo-900/40 dark:border-indigo-800 dark:text-indigo-400 text-xs"
                             >
                               {g}
                             </Badge>
@@ -162,7 +162,7 @@ export default function RoutineDayCard({
         )}
 
         {unassigned.length === 0 && assigned.length === 0 && (
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-text-muted">
             No hay máquinas registradas para estos músculos.{" "}
             <Button asChild variant="link" className="text-sm p-0 h-auto">
               <Link href="/analyze" className="inline-flex items-center gap-1">

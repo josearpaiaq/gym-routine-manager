@@ -20,7 +20,7 @@ export default function NavLink({ href, children }: NavLinkProps) {
       className={cn(
         buttonVariants({ variant: "ghost", size: "sm" }),
         "flex items-center gap-1.5",
-        isActive ? "text-white bg-gray-800" : "text-gray-400"
+        isActive ? "text-text bg-card-hover" : "text-text-muted"
       )}
     >
       {children}

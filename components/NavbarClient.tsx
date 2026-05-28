@@ -48,7 +48,7 @@ export default function NavbarClient({ username }: NavbarClientProps) {
         onClick={() => setOpen((prev) => !prev)}
         aria-haspopup="true"
         aria-expanded={open}
-        className="flex items-center gap-1.5 text-gray-400 hover:text-white"
+        className="flex items-center gap-1.5 text-text-muted hover:text-text"
       >
         <UserRound size={18} />
         <span className="hidden sm:inline max-w-24 truncate">{username}</span>
@@ -56,21 +56,21 @@ export default function NavbarClient({ username }: NavbarClientProps) {
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-gray-800 bg-gray-900 shadow-xl z-50 py-1">
-          <div className="px-3 py-2 text-xs text-gray-500 border-b border-gray-800 truncate">
+        <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-border bg-overlay shadow-xl z-50 py-1">
+          <div className="px-3 py-2 text-xs text-text-muted border-b border-border truncate">
             {username}
           </div>
           <Link
             href="/profile"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-text-muted hover:bg-card-hover hover:text-text transition-colors"
           >
             <UserRound size={14} />
             Perfil
           </Link>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-muted hover:bg-card-hover hover:text-text transition-colors"
           >
             <LogOut size={14} />
             Cerrar sesión

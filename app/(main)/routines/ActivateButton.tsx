@@ -25,7 +25,7 @@ export default function ActivateButton({ routineId }: { routineId: number }) {
       size="sm"
       onClick={handleActivate}
       disabled={loading}
-      className="shrink-0 text-xs border-gray-700 hover:border-indigo-500 hover:text-indigo-300"
+      className="shrink-0 text-xs border-border hover:border-indigo-500 hover:text-indigo-300"
     >
       {loading ? "..." : "Activar"}
     </Button>

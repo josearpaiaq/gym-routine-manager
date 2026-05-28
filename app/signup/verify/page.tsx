@@ -94,14 +94,14 @@ function VerifyForm() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-4">
+    <main className="min-h-screen bg-canvas text-text flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Link href="/" className="text-2xl font-bold tracking-tight">
             GymManager
           </Link>
-          <p className="mt-2 text-gray-400 text-sm">
-            Enviamos un código a <span className="text-white">{email}</span>
+          <p className="mt-2 text-text-muted text-sm">
+            Enviamos un código a <span className="text-text">{email}</span>
           </p>
         </div>
 
@@ -119,7 +119,7 @@ function VerifyForm() {
                 value={d}
                 onChange={(e) => handleDigitChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
-                className="w-12 h-14 rounded-xl bg-gray-900 border border-gray-700 text-center text-xl font-bold text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-12 h-14 rounded-xl bg-card border border-border text-center text-xl font-bold text-text focus:outline-none focus:border-indigo-500 transition-colors"
               />
             ))}
           </div>
@@ -138,7 +138,7 @@ function VerifyForm() {
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center text-sm text-text-muted">
           {resent ? (
             <span className="text-green-400">Código reenviado</span>
           ) : (

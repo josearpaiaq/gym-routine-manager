@@ -27,12 +27,12 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
     : [];
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-canvas text-text">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10">
         <div className="mb-6">
           <Link
             href="/machines"
-            className="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors mb-1"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-text-muted hover:text-text transition-colors mb-1"
           >
             <ArrowLeft size={14} />
             Máquinas
@@ -63,11 +63,11 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
         </Card>
 
         <div className="space-y-3">
-          <p className="text-xs uppercase tracking-widest text-gray-400 font-semibold px-1">
+          <p className="text-xs uppercase tracking-widest text-text-muted font-semibold px-1">
             Ejercicios ({machine.exercises.length})
           </p>
           {machine.exercises.length === 0 ? (
-            <p className="text-sm text-gray-600 px-1">
+            <p className="text-sm text-text-muted px-1">
               No hay ejercicios registrados para esta máquina.
             </p>
           ) : (
@@ -89,7 +89,7 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-white leading-tight">{ex.name}</h3>
+                      <h3 className="font-semibold text-text leading-tight">{ex.name}</h3>
                       <p className="text-xs text-indigo-300 mt-0.5">{ex.target_muscles}</p>
                     </div>
                     {isHighlighted && (
@@ -100,7 +100,7 @@ export default async function MachineDetailPage({ params, searchParams }: PagePr
                   </div>
                   <ol className="pl-10 space-y-1.5 list-none">
                     {ex.execution.map((step, j) => (
-                      <li key={j} className="flex gap-2 text-sm text-gray-300 leading-relaxed">
+                      <li key={j} className="flex gap-2 text-sm text-text leading-relaxed">
                         <span className="shrink-0 font-medium text-indigo-400">{j + 1}.</span>
                         <span>{step}</span>
                       </li>

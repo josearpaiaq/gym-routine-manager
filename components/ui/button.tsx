@@ -13,9 +13,9 @@ const buttonVariants = cva(
         default: "bg-indigo-600 text-white hover:bg-indigo-500",
         destructive: "bg-red-900/40 border border-red-800 text-red-400 hover:bg-red-900/70",
         outline:
-          "border border-gray-700 bg-transparent text-gray-300 hover:bg-gray-800 hover:text-white",
-        secondary: "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white",
-        ghost: "text-gray-400 hover:bg-gray-800 hover:text-white",
+          "border border-border bg-transparent text-text-muted hover:bg-card-hover hover:text-text",
+        secondary: "bg-card-hover text-text-muted hover:bg-card-hover/80 hover:text-text",
+        ghost: "text-text-muted hover:bg-card-hover hover:text-text",
         link: "text-indigo-400 underline-offset-4 hover:underline hover:text-indigo-300 p-0 h-auto",
       },
       size: {

@@ -7,11 +7,11 @@ export default async function LandingPage() {
   const session = await getSession();
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white overflow-hidden">
+    <main className="min-h-screen bg-canvas text-text overflow-hidden">
       {/* Hero */}
       <section className="relative mx-auto max-w-4xl px-6 pt-24 pb-20 text-center">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(99,102,241,0.15),transparent)]" />
-        <span className="inline-flex items-center gap-2 rounded-full border border-indigo-800 bg-indigo-950/50 px-4 py-1.5 text-xs font-medium text-indigo-300 mb-6">
+        <span className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-medium text-indigo-600 mb-6 dark:border-indigo-800 dark:bg-indigo-950/50 dark:text-indigo-300">
           IA integrada · Sin costo
         </span>
         <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.1]">
@@ -21,7 +21,7 @@ export default async function LandingPage() {
             entrena con inteligencia.
           </span>
         </h1>
-        <p className="mt-6 text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-base sm:text-lg text-text-muted max-w-2xl mx-auto leading-relaxed">
           Sube una foto de cualquier máquina y la IA te dice qué ejercicios hacer. Crea rutinas
           por músculo, registra tus entrenos y mantén tu racha activa.
         </p>
@@ -50,7 +50,7 @@ export default async function LandingPage() {
 
       {/* How it works */}
       <section className="mx-auto max-w-4xl px-6 pb-20">
-        <p className="text-center text-xs font-semibold uppercase tracking-widest text-gray-500 mb-10">
+        <p className="text-center text-xs font-semibold uppercase tracking-widest text-text-muted mb-10">
           Cómo funciona
         </p>
         <div className="grid sm:grid-cols-3 gap-8">
@@ -74,7 +74,7 @@ export default async function LandingPage() {
 
       {/* Features */}
       <section className="mx-auto max-w-4xl px-6 pb-20">
-        <p className="text-center text-xs font-semibold uppercase tracking-widest text-gray-500 mb-10">
+        <p className="text-center text-xs font-semibold uppercase tracking-widest text-text-muted mb-10">
           Características
         </p>
         <div className="grid sm:grid-cols-3 gap-5">
@@ -98,11 +98,11 @@ export default async function LandingPage() {
 
       {/* CTA Banner */}
       <section className="mx-auto max-w-4xl px-6 pb-24">
-        <div className="rounded-2xl border border-indigo-800/50 bg-indigo-950/30 px-8 py-12 text-center">
+        <div className="rounded-2xl border border-indigo-200 bg-indigo-50 px-8 py-12 text-center dark:border-indigo-800/50 dark:bg-indigo-950/30">
           <h2 className="text-2xl sm:text-3xl font-bold mb-3">
             Empieza hoy — es completamente gratis
           </h2>
-          <p className="text-gray-400 mb-8 max-w-md mx-auto">
+          <p className="text-text-muted mb-8 max-w-md mx-auto">
             Sin tarjeta de crédito. Sin límite de rutinas. Analiza máquinas y organiza tus
             entrenamientos desde el primer día.
           </p>
@@ -133,8 +133,8 @@ function Step({
   return (
     <div className="flex flex-col gap-3">
       <span className="text-4xl font-black text-indigo-900">{number}</span>
-      <h3 className="font-semibold text-white text-lg">{title}</h3>
-      <p className="text-sm text-gray-400 leading-relaxed">{description}</p>
+      <h3 className="font-semibold text-text text-lg">{title}</h3>
+      <p className="text-sm text-text-muted leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -149,10 +149,10 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-6 space-y-3">
+    <div className="rounded-xl border border-border bg-card/50 p-6 space-y-3">
       <div>{icon}</div>
-      <h3 className="font-semibold text-white">{title}</h3>
-      <p className="text-sm text-gray-400">{description}</p>
+      <h3 className="font-semibold text-text">{title}</h3>
+      <p className="text-sm text-text-muted">{description}</p>
     </div>
   );
 }

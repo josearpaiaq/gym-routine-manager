@@ -48,7 +48,7 @@ export default function DeleteAccountSection({ username }: Props) {
   if (step === "idle") {
     return (
       <div>
-        <p className="text-sm text-gray-400 mb-4">
+        <p className="text-sm text-text-muted mb-4">
           Esta acción elimina permanentemente tu cuenta y todos tus datos. No se puede deshacer.
         </p>
         <Button
@@ -65,7 +65,7 @@ export default function DeleteAccountSection({ username }: Props) {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-text-muted">
         Para confirmar, escribe tu nombre de usuario:{" "}
         <span className="text-white font-medium">{username}</span>
       </p>

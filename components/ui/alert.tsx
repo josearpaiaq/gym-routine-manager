@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const alertVariants = cva("relative w-full rounded-xl border px-4 py-3 text-sm", {
   variants: {
     variant: {
-      default: "bg-gray-900 border-gray-800 text-gray-300",
+      default: "bg-card border-border text-text-muted",
       destructive: "bg-red-900/40 border-red-700 text-red-300",
     },
   },

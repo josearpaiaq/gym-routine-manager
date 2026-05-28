@@ -22,7 +22,7 @@ interface AnalysisResult {
 }
 
 const dropzoneClass =
-  "flex flex-col items-center justify-center w-full h-52 rounded-2xl border-2 border-dashed border-gray-600 bg-gray-900 cursor-pointer hover:border-indigo-500 hover:bg-gray-800 transition-colors";
+  "flex flex-col items-center justify-center w-full h-52 rounded-2xl border-2 border-dashed border-border bg-card cursor-pointer hover:border-indigo-500 hover:bg-card-hover transition-colors";
 
 export default function AnalyzeForm() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -86,16 +86,16 @@ export default function AnalyzeForm() {
 
   const dropzoneContent = (
     <>
-      <ImageUp size={36} className="mb-3 text-gray-400" />
-      <span className="text-sm font-medium text-gray-300">Toca para subir o tomar foto</span>
-      <span className="text-xs text-gray-500 mt-1">JPG, PNG, WEBP — máx 10 MB</span>
+      <ImageUp size={36} className="mb-3 text-text-muted" />
+      <span className="text-sm font-medium text-text">Toca para subir o tomar foto</span>
+      <span className="text-xs text-text-muted mt-1">JPG, PNG, WEBP — máx 10 MB</span>
     </>
   );
 
   return (
     <div className="mx-auto max-w-lg px-4 py-10">
       <div className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-300 transition-colors">
+        <Link href="/" className="inline-flex items-center gap-1 text-sm font-semibold text-text-muted hover:text-text transition-colors">
           <ArrowLeft size={14} />
           Volver
         </Link>
@@ -103,7 +103,7 @@ export default function AnalyzeForm() {
 
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Analizar máquina</h1>
-        <p className="mt-2 text-gray-400">
+        <p className="mt-2 text-text-muted">
           Sube o toma una foto y recibe ejercicios recomendados con IA
         </p>
       </div>
@@ -155,14 +155,14 @@ export default function AnalyzeForm() {
           {/* Desktop: label triggers file input */}
           <label
             htmlFor="file-input"
-            className="absolute top-3 right-3 hidden md:inline-flex rounded-full bg-gray-900/80 px-3 py-1 text-xs font-medium hover:bg-gray-700 transition-colors cursor-pointer"
+            className="absolute top-3 right-3 hidden md:inline-flex rounded-full bg-card/80 px-3 py-1 text-xs font-medium hover:bg-card-hover/80 transition-colors cursor-pointer"
           >
             Cambiar imagen
           </label>
           {/* Mobile: button opens picker */}
           <button
             onClick={() => setShowMobilePicker(true)}
-            className="absolute top-3 right-3 md:hidden rounded-full bg-gray-900/80 px-3 py-1 text-xs font-medium hover:bg-gray-700 transition-colors"
+            className="absolute top-3 right-3 md:hidden rounded-full bg-card/80 px-3 py-1 text-xs font-medium hover:bg-card-hover/80 transition-colors"
           >
             Cambiar imagen
           </button>
@@ -202,7 +202,7 @@ export default function AnalyzeForm() {
               </div>
               <div>
                 <p className="font-semibold text-amber-300">No es una máquina de gym</p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-text-muted mt-1">
                   La imagen no parece ser una máquina de ejercicio. Intenta con una foto más
                   clara o desde otro ángulo.
                 </p>
@@ -234,7 +234,7 @@ export default function AnalyzeForm() {
           </Card>
 
           <div className="space-y-3">
-            <h3 className="text-xs uppercase tracking-widest text-gray-400 font-semibold px-1">
+            <h3 className="text-xs uppercase tracking-widest text-text-muted font-semibold px-1">
               Ejercicios recomendados
             </h3>
             {result.exercises.map((ex, i) => (
@@ -245,13 +245,13 @@ export default function AnalyzeForm() {
                       {i + 1}
                     </span>
                     <div className="min-w-0">
-                      <h4 className="font-semibold text-white leading-tight">{ex.name}</h4>
+                      <h4 className="font-semibold text-text leading-tight">{ex.name}</h4>
                       <p className="text-xs text-indigo-300 mt-0.5">{ex.targetMuscles}</p>
                     </div>
                   </div>
                   <ol className="pl-10 space-y-1.5 list-none">
                     {ex.execution.map((step, j) => (
-                      <li key={j} className="flex gap-2 text-sm text-gray-300 leading-relaxed">
+                      <li key={j} className="flex gap-2 text-sm text-text leading-relaxed">
                         <span className="shrink-0 font-medium text-indigo-400">{j + 1}.</span>
                         <span>{step}</span>
                       </li>
@@ -284,38 +284,38 @@ export default function AnalyzeForm() {
           onClick={() => setShowMobilePicker(false)}
         >
           <div
-            className="w-full max-w-lg rounded-t-2xl bg-gray-900 p-6 pb-10 space-y-3"
+            className="w-full max-w-lg rounded-t-2xl bg-card p-6 pb-10 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-center text-sm font-medium text-gray-400 mb-4">
+            <p className="text-center text-sm font-medium text-text-muted mb-4">
               ¿Cómo quieres agregar la imagen?
             </p>
             <button
               type="button"
               onClick={() => cameraInputRef.current?.click()}
-              className="flex items-center gap-4 w-full rounded-xl bg-gray-800 px-5 py-4 text-left hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-4 w-full rounded-xl bg-card-hover px-5 py-4 text-left hover:bg-card-hover/80 transition-colors"
             >
               <Camera size={22} className="text-indigo-400 shrink-0" />
               <div>
-                <p className="font-semibold text-white">Tomar foto</p>
-                <p className="text-xs text-gray-400">Abre la cámara del dispositivo</p>
+                <p className="font-semibold text-text">Tomar foto</p>
+                <p className="text-xs text-text-muted">Abre la cámara del dispositivo</p>
               </div>
             </button>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-4 w-full rounded-xl bg-gray-800 px-5 py-4 text-left hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-4 w-full rounded-xl bg-card-hover px-5 py-4 text-left hover:bg-card-hover/80 transition-colors"
             >
               <Upload size={22} className="text-indigo-400 shrink-0" />
               <div>
-                <p className="font-semibold text-white">Subir imagen</p>
-                <p className="text-xs text-gray-400">Elige desde tu galería o archivos</p>
+                <p className="font-semibold text-text">Subir imagen</p>
+                <p className="text-xs text-text-muted">Elige desde tu galería o archivos</p>
               </div>
             </button>
             <button
               type="button"
               onClick={() => setShowMobilePicker(false)}
-              className="w-full mt-2 py-3 text-sm text-gray-500 hover:text-gray-300 transition-colors"
+              className="w-full mt-2 py-3 text-sm text-text-muted hover:text-text transition-colors"
             >
               Cancelar
             </button>

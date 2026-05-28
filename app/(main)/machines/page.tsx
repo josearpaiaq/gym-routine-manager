@@ -16,12 +16,12 @@ export default async function MachinesPage({ searchParams }: PageProps) {
   const { machines, total, totalPages } = await listMachinesPaged(page, 10);
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-canvas text-text">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Máquinas</h1>
-            <p className="text-gray-400 text-sm mt-1">{total} en la base de datos</p>
+            <p className="text-text-muted text-sm mt-1">{total} en la base de datos</p>
           </div>
           <Button asChild>
             <Link href="/analyze">+ Analizar nueva</Link>
@@ -30,7 +30,7 @@ export default async function MachinesPage({ searchParams }: PageProps) {
 
         {machines.length === 0 ? (
           <Card className="p-12 text-center">
-            <p className="text-gray-400">No hay máquinas registradas aún.</p>
+            <p className="text-text-muted">No hay máquinas registradas aún.</p>
             <Button asChild variant="link" className="mt-4 text-sm">
               <Link href="/analyze" className="inline-flex items-center gap-1">
                 Analiza la primera máquina
@@ -59,7 +59,7 @@ export default async function MachinesPage({ searchParams }: PageProps) {
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h2 className={`font-semibold truncate transition-colors ${machine.is_gym_machine ? "text-white group-hover:text-indigo-300" : "text-amber-300"}`}>
+                      <h2 className={`font-semibold truncate transition-colors ${machine.is_gym_machine ? "text-text group-hover:text-indigo-500 dark:group-hover:text-indigo-300" : "text-amber-600 dark:text-amber-300"}`}>
                         {machine.canonical_name}
                       </h2>
                       {!machine.is_gym_machine && (
@@ -76,7 +76,7 @@ export default async function MachinesPage({ searchParams }: PageProps) {
                       </div>
                     )}
                   </div>
-                  <ChevronRight size={18} className="text-gray-600 group-hover:text-indigo-400 transition-colors shrink-0" />
+                  <ChevronRight size={18} className="text-text-muted group-hover:text-indigo-400 transition-colors shrink-0" />
                 </Card>
               </Link>
             ))}
@@ -93,7 +93,7 @@ export default async function MachinesPage({ searchParams }: PageProps) {
                 </Link>
               </Button>
             )}
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-text-muted">
               {page} / {totalPages}
             </span>
             {page < totalPages && (
