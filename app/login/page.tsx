@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
 
 function LoginForm() {
   const router = useRouter();
@@ -118,11 +120,20 @@ function LoginForm() {
           </Button>
         </form>
 
+        <div className="mt-4">
+          <Link
+            href="/login-otp"
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}
+          >
+            Iniciar sesión con OTP
+          </Link>
+        </div>
+
         <p className="mt-6 text-center text-sm text-text-muted">
           ¿No tienes cuenta?{" "}
-          <Button variant="link" asChild className="text-sm p-0">
-            <Link href="/signup">Regístrate</Link>
-          </Button>
+          <Link href="/signup" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+            Regístrate
+          </Link>
         </p>
       </div>
     </main>

@@ -2,6 +2,10 @@ import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { otpCodes } from "@/db/schema";
 
+export function generateCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 export async function createOtp(email: string, code: string, expiresAt: Date): Promise<void> {
   await db
     .update(otpCodes)

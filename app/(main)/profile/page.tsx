@@ -48,7 +48,7 @@ export default async function ProfilePage() {
             <h2 className="font-semibold text-lg text-red-400">Zona de peligro</h2>
             <p className="text-xs text-text-muted mt-0.5">Acciones irreversibles</p>
           </div>
-          <DeleteAccountSection username={user.username} />
+          <DeleteAccountSection />
         </Card>
       </div>
     </main>
