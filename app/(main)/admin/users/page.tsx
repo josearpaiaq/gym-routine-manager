@@ -61,7 +61,7 @@ export default async function AdminUsersPage() {
                       userId={u.id}
                       field="isAdmin"
                       value={u.isAdmin}
-                      disabled={u.id === session?.userId}
+                      disabled={u.id === session?.userId || u.isAdmin}
                     />
                   </td>
                 </tr>

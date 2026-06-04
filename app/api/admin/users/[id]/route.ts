@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth";
-import { updateUserById } from "@/services/users";
+import { getUserById, updateUserById } from "@/services/users";
 
 const schema = z.object({
   isEnabled: z.boolean().optional(),
@@ -29,6 +29,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
   if (userId === session.userId && parsed.data.isEnabled === false) {
     return NextResponse.json({ error: "No puedes desactivarte a ti mismo" }, { status: 400 });
+  }
+
+  if (parsed.data.isAdmin !== undefined) {
+    const target = await getUserById(userId);
+    if (target?.isAdmin) {
+      return NextResponse.json({ error: "No puedes modificar el rol de otro admin" }, { status: 403 });
+    }
   }
 
   await updateUserById(userId, parsed.data);
